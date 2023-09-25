@@ -21,6 +21,7 @@ public class Exp extends Node {
     }
 
     public static Exp makeExp() {
-
+        AddExp addExp1 = AddExp.makeAddExp();
+        return new Exp(addExp1);
     }
 }

@@ -33,4 +33,8 @@ public class Parser {
         }
         return null;
     }
+
+    public void writeNodeParser() {
+        compUnit.writeNode();
+    }
 }

@@ -3,6 +3,9 @@ package Node;
 import FileProcess.MyFileWriter;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
+import Parse.Parser;
+
+import java.util.Objects;
 
 // 一元表达式 UnaryExp → PrimaryExp | Ident '(' [FuncRParams] ')' | UnaryOp UnaryExp
 public class UnaryExp extends Node{
@@ -74,5 +77,27 @@ public class UnaryExp extends Node{
             unaryExp.writeNode();
         }
         MyFileWriter.write(NodeTypeMap.nodeTypeMap.get(NodeType.UnaryExp));
+    }
+
+    public static UnaryExp makeUnaryExp() {
+        if(Objects.equals(Parser.currentToken.getCategory(), "IDENFR") && Objects.equals(Parser.tokenArrayList.get(Parser.index + 1).getCategory(), "LPARENT")) {
+            Token identifier = Parser.checkCategory("IDENFR");
+            Token leftParent = Parser.checkCategory("LPARENT");
+            FuncRParams funcRParams1 = null;
+            if(!Objects.equals(Parser.currentToken.getCategory(), "RPARENT")) {
+                funcRParams1 = FuncRParams.makeFuncParams();
+            }
+            Token rightParent = Parser.checkCategory("RPARENT");
+            return new UnaryExp(identifier, leftParent, funcRParams1, rightParent);
+        }
+        else if(Objects.equals(Parser.currentToken.getCategory(), "PLUS") || Objects.equals(Parser.currentToken.getCategory(), "MINU") || Objects.equals(Parser.currentToken.getCategory(), "NOT")) {
+            UnaryOp unaryOp1 = UnaryOp.makeUnaryOp();
+            UnaryExp unaryExp1 = UnaryExp.makeUnaryExp();
+            return new UnaryExp(unaryOp1, unaryExp1);
+        }
+        else {
+            PrimaryExp primaryExp1 = PrimaryExp.makePrimaryExp();
+            return new UnaryExp(primaryExp1);
+        }
     }
 }

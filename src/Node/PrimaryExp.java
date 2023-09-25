@@ -3,6 +3,9 @@ package Node;
 import FileProcess.MyFileWriter;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
+import Parse.Parser;
+
+import java.util.Objects;
 
 // 基本表达式 PrimaryExp → '(' Exp ')' | LVal | Number
 public class PrimaryExp {
@@ -51,5 +54,22 @@ public class PrimaryExp {
             numberNode.writeNode();
         }
         MyFileWriter.write(NodeTypeMap.nodeTypeMap.get(NodeType.PrimaryExp));
+    }
+
+    public static PrimaryExp makePrimaryExp() {
+        if(Objects.equals(Parser.currentToken.getCategory(), "LPARENT")) {
+            Token leftParent1 = Parser.checkCategory("LPARENT");
+            Exp exp1 = Exp.makeExp();
+            Token rightParent1 = Parser.checkCategory("RPARENT");
+            return new PrimaryExp(leftParent1, exp1, rightParent1);
+        }
+        else if(Objects.equals(Parser.currentToken.getCategory(), "INTCON")) {
+            NumberNode numberNode1 = NumberNode.makeNumberNode();
+            return new PrimaryExp(numberNode1);
+        }
+        else {
+            LVal lVal1 = LVal.makeLVal();
+            return new PrimaryExp(lVal1);
+        }
     }
 }

@@ -21,6 +21,7 @@ public class ConstExp extends Node {
     }
 
     public static ConstExp makeConstExp() {
-
+        AddExp addExp = AddExp.makeAddExp();
+        return new ConstExp(addExp);
     }
 }

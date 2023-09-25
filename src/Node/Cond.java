@@ -21,6 +21,7 @@ public class Cond extends Node {
     }
 
     public static Cond makeCond() {
-
+        LOrExp lOrExp1 = LOrExp.makeLOrExp();
+        return new Cond(lOrExp1);
     }
 }

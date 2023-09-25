@@ -3,8 +3,10 @@ package Node;
 import FileProcess.MyFileWriter;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
+import Parse.Parser;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 // 函数实参表 FuncRParams → Exp { ',' Exp }
 public class FuncRParams extends Node{
@@ -27,5 +29,17 @@ public class FuncRParams extends Node{
             expArrayList.get(i).writeNode();
         }
         MyFileWriter.write(NodeTypeMap.nodeTypeMap.get(NodeType.FuncRParams));
+    }
+
+    public static FuncRParams makeFuncParams() {
+        ArrayList<Exp> exps = new ArrayList<>();
+        ArrayList<Token> commas = new ArrayList<>();
+
+        exps.add(Exp.makeExp());
+        while(Objects.equals(Parser.currentToken.getCategory(), "COMMA")) {
+            commas.add(Parser.checkCategory("COMMA"));
+            exps.add(Exp.makeExp());
+        }
+        return new FuncRParams(exps, commas);
     }
 }

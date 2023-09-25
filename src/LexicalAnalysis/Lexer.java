@@ -21,7 +21,7 @@ public class Lexer {
         this.lineAnnotation = false;
         this.blockAnnotation = false;
         runLexer();
-        tokenList.forEach(Token::writeIntoFile);
+        // tokenList.forEach(Token::writeIntoFile);
     }
 
     public void runLexer() throws IOException {

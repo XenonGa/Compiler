@@ -3,6 +3,9 @@ package Node;
 import FileProcess.MyFileWriter;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
+import Parse.Parser;
+
+import java.util.Objects;
 
 // 逻辑与表达式 LAndExp → EqExp | LAndExp '&&' EqExp
 public class LAndExp extends Node {
@@ -29,14 +32,23 @@ public class LAndExp extends Node {
     }
 
     public void writeNode() {
-        if(lAndExp == null) {
-            eqExp.writeNode();
-        }
-        else {
-            lAndExp.writeNode();
-            MyFileWriter.write(and.getWholeToken());
-            eqExp.writeNode();
-        }
+        eqExp.writeNode();
         MyFileWriter.write(NodeTypeMap.nodeTypeMap.get(NodeType.LAndExp));
+        if(lAndExp != null) {
+            MyFileWriter.write(and.getWholeToken());
+            lAndExp.writeNode();
+        }
+    }
+
+    public static LAndExp makeLAndExp() {
+        EqExp eqExp1 = EqExp.makeEqExp();
+        Token sign = null;
+        LAndExp lAndExp1 = null;
+
+        if(Objects.equals(Parser.currentToken.getCategory(), "AND")) {
+            sign = Parser.checkCategory("AND");
+            lAndExp1 = makeLAndExp();
+        }
+        return new LAndExp(eqExp1, sign, lAndExp1);
     }
 }

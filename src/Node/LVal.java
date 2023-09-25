@@ -3,8 +3,10 @@ package Node;
 import FileProcess.MyFileWriter;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
+import Parse.Parser;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 // 左值表达式 LVal → Ident {'[' Exp ']'}
 public class LVal extends Node {
@@ -41,6 +43,16 @@ public class LVal extends Node {
     }
 
     public static LVal makeLVal() {
+        ArrayList<Token> leftBrackets = new ArrayList<>();
+        ArrayList<Exp> exps = new ArrayList<>();
+        ArrayList<Token> rightBrackets = new ArrayList<>();
 
+        Token identifier = Parser.checkCategory("IDENFR");
+        while(Objects.equals(Parser.currentToken.getCategory(), "LBRACK")) {
+            leftBrackets.add(Parser.checkCategory("LBRACK"));
+            exps.add(Exp.makeExp());
+            rightBrackets.add(Parser.checkCategory("RBRACK"));
+        }
+        return new LVal(identifier, leftBrackets, exps, rightBrackets);
     }
 }

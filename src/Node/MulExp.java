@@ -3,6 +3,9 @@ package Node;
 import FileProcess.MyFileWriter;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
+import Parse.Parser;
+
+import java.util.Objects;
 
 // 乘除模表达式 MulExp → UnaryExp | MulExp ('*' | '/' | '%') UnaryExp
 public class MulExp extends Node {
@@ -29,14 +32,31 @@ public class MulExp extends Node {
     }
 
     public void writeNode() {
-        if(mulExp == null) {
-            unaryExp.writeNode();
-        }
-        else {
-            mulExp.writeNode();
-            MyFileWriter.write(sign.getWholeToken());
-            unaryExp.writeNode();
-        }
+        unaryExp.writeNode();
         MyFileWriter.write(NodeTypeMap.nodeTypeMap.get(NodeType.MulExp));
+        if(mulExp != null) {
+            MyFileWriter.write(sign.getWholeToken());
+            mulExp.writeNode();
+        }
+    }
+
+    public static MulExp makeMulExp() {
+        UnaryExp unaryExp = UnaryExp.makeUnaryExp();
+        Token sign = null;
+        MulExp mulExp = null;
+
+        if(Objects.equals(Parser.currentToken.getCategory(), "MULT")) {
+            sign = Parser.checkCategory("MULT");
+            mulExp = makeMulExp();
+        }
+        else if(Objects.equals(Parser.currentToken.getCategory(), "DIV")) {
+            sign = Parser.checkCategory("DIV");
+            mulExp = makeMulExp();
+        }
+        else if(Objects.equals(Parser.currentToken.getCategory(), "MOD")) {
+            sign = Parser.checkCategory("MOD");
+            mulExp = makeMulExp();
+        }
+        return new MulExp(unaryExp, mulExp, sign);
     }
 }

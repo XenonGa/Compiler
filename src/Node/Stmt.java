@@ -33,7 +33,9 @@ public class Stmt extends Node{
     private ArrayList<Stmt> stmtArrayList;
     private Token elseTK;
     private Token forTK;
-    private ArrayList<ForStmt> forStmtArrayList;
+    private ForStmt forStmt1;
+    private ForStmt forStmt2;
+
     private Token breakTK;
     private Token continueTK;
     private Token returnTK;
@@ -72,14 +74,16 @@ public class Stmt extends Node{
         this.elseTK = elseTK;
     }
 
-    public Stmt(StmtType stmtType, ArrayList<Token> semicolonArrayList, Token leftParent, Cond cond, Token rightParent, Token forTK, ArrayList<ForStmt> forStmtArrayList) {
+    public Stmt(StmtType stmtType, ArrayList<Token> semicolonArrayList, Token leftParent, Cond cond, Token rightParent, Token forTK, ForStmt forStmt1, ForStmt forStmt2, ArrayList<Stmt> stmtArrayList) {
         this.stmtType = stmtType;
         this.semicolonArrayList = semicolonArrayList;
         this.leftParent = leftParent;
         this.cond = cond;
         this.rightParent = rightParent;
         this.forTK = forTK;
-        this.forStmtArrayList = forStmtArrayList;
+        this.forStmt1 = forStmt1;
+        this.forStmt2 = forStmt2;
+        this.stmtArrayList = stmtArrayList;
     }
 
     public Stmt(StmtType stmtType, Token semicolon, Token breakOrContinueTK) {
@@ -147,8 +151,11 @@ public class Stmt extends Node{
         return stmtArrayList;
     }
 
-    public ArrayList<ForStmt> getForStmtArrayList() {
-        return forStmtArrayList;
+    public ForStmt getForStmt1() {
+        return forStmt1;
+    }
+    public ForStmt getForStmt2() {
+        return forStmt2;
     }
 
     public ArrayList<Exp> getExpArrayList() {
@@ -182,16 +189,16 @@ public class Stmt extends Node{
             case For -> {
                 MyFileWriter.write(forTK.getWholeToken());
                 MyFileWriter.write(leftParent.getWholeToken());
-                if(!forStmtArrayList.isEmpty()) {
-                    forStmtArrayList.get(0).writeNode();
+                if(forStmt1 != null) {
+                    forStmt1.writeNode();
                 }
                 MyFileWriter.write(semicolonArrayList.get(0).getWholeToken());
                 if(cond != null) {
                     cond.writeNode();
                 }
                 MyFileWriter.write(semicolonArrayList.get(0).getWholeToken());
-                if(forStmtArrayList.size() > 1) {
-                    forStmtArrayList.get(1).writeNode();
+                if(forStmt2 != null) {
+                   forStmt2.writeNode();
                 }
                 MyFileWriter.write(rightParent.getWholeToken());
                 stmtArrayList.get(0).writeNode();
@@ -260,11 +267,13 @@ public class Stmt extends Node{
         else if(Objects.equals(Parser.currentToken.getCategory(), "FORTK")) {
             Token forTK = Parser.checkCategory("FORTK");
             Token leftParent = Parser.checkCategory("LPARENT");
-            ArrayList<ForStmt> forStmts = new ArrayList<>();
+            ForStmt forStmt1 = null;
+            ForStmt forStmt2 = null;
             ArrayList<Token> semicolons = new ArrayList<>();
+            ArrayList<Stmt> stmtArrayList1 = new ArrayList<>();
             Cond cond = null;
             if(!Objects.equals(Parser.currentToken.getCategory(), "SEMICN")) {
-                forStmts.add(ForStmt.makeForStmt());
+                forStmt1 = ForStmt.makeForStmt();
             }
             semicolons.add(Parser.checkCategory("SEMICN"));
             if(!Objects.equals(Parser.currentToken.getCategory(), "SEMICN")) {
@@ -272,20 +281,21 @@ public class Stmt extends Node{
             }
             semicolons.add(Parser.checkCategory("SEMICN"));
             if(!Objects.equals(Parser.currentToken.getCategory(), "RPARENT")) {
-                forStmts.add(ForStmt.makeForStmt());
+                forStmt2 = ForStmt.makeForStmt();
             }
             Token rightParent = Parser.checkCategory("RPARENT");
-            return new Stmt(StmtType.For, semicolons, leftParent, cond, rightParent, forTK, forStmts);
+            stmtArrayList1.add(makeStmt());
+            return new Stmt(StmtType.For, semicolons, leftParent, cond, rightParent, forTK, forStmt1, forStmt2, stmtArrayList1);
         }
         else if(Objects.equals(Parser.currentToken.getCategory(), "BREAKTK")) {
             Token breakTK = Parser.checkCategory("BREAKTK");
             Token semicolon = Parser.checkCategory("SEMICN");
-            return new Stmt(StmtType.Break, breakTK, semicolon);
+            return new Stmt(StmtType.Break, semicolon, breakTK);
         }
         else if(Objects.equals(Parser.currentToken.getCategory(), "CONTINUETK")) {
             Token continueTK = Parser.checkCategory("CONTINUETK");
             Token semicolon = Parser.checkCategory("SEMICN");
-            return new Stmt(StmtType.Continue, continueTK, semicolon);
+            return new Stmt(StmtType.Continue, semicolon, continueTK);
         }
         else if(Objects.equals(Parser.currentToken.getCategory(), "RETURNTK")) {
             Token returnTK = Parser.checkCategory("RETURNTK");
@@ -335,7 +345,7 @@ public class Stmt extends Node{
                     Token leftParent = Parser.checkCategory("LPARENT");
                     Token rightParent = Parser.checkCategory("RPARENT");
                     Token semicolon = Parser.checkCategory("SEMICN");
-                    return new Stmt(StmtType.LVal_Assign_Getint, lVal, assign, getInt, leftParent, rightParent, semicolon);
+                    return new Stmt(StmtType.LVal_Assign_Getint, lVal, assign, semicolon, leftParent, rightParent, getInt);
                 }
             }
             else {
