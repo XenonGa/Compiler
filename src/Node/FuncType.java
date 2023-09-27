@@ -31,7 +31,7 @@ public class FuncType extends Node {
 
     public static FuncType makeFuncType() {
         Token TK;
-        if(Objects.equals(Parser.currentToken.getCategory(), "VOIDTK")) {
+        if(checkCurrentTokenCategory("VOIDTK")) {
             TK = Parser.checkCategory("VOIDTK");
         }
         else {

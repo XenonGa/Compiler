@@ -23,6 +23,14 @@ public class AddExp extends Node {
         this.sign = sign;
     }
 
+    public MulExp getMulExp() {
+        return mulExp;
+    }
+
+    public AddExp getAddExp() {
+        return addExp;
+    }
+
     public void writeNode() {
         mulExp.writeNode();
         MyFileWriter.write(NodeTypeMap.nodeTypeMap.get(NodeType.AddExp));
@@ -36,12 +44,11 @@ public class AddExp extends Node {
         MulExp mulExp = MulExp.makeMulExp();
         Token sign = null;
         AddExp addExp = null;
-
-        if(Objects.equals(Parser.currentToken.getCategory(), "PLUS")) {
+        if(checkCurrentTokenCategory("PLUS")) {
             sign = Parser.checkCategory("PLUS");
             addExp = makeAddExp();
         }
-        else if(Objects.equals(Parser.currentToken.getCategory(), "MINU")) {
+        else if(checkCurrentTokenCategory("MINU")) {
             sign = Parser.checkCategory("MINU");
             addExp = makeAddExp();
         }

@@ -31,7 +31,7 @@ public class Decl extends Node {
     }
 
     public static Decl makeDecl() {
-        if(Objects.equals(Parser.currentToken.getCategory(), "CONSTTK")){
+        if(checkCurrentTokenCategory("CONSTTK")){
             ConstDecl constDecl = ConstDecl.makeConstDecl();
             return new Decl(constDecl);
         }

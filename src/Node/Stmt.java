@@ -244,12 +244,12 @@ public class Stmt extends Node{
     }
 
     public static Stmt makeStmt() {
-        if(Objects.equals(Parser.currentToken.getCategory(), "LBRACE")) {
+        if(checkCurrentTokenCategory("LBRACE")) {
             // Block
             Block block = Block.makeBlock();
             return new Stmt(StmtType.Block, block);
         }
-        else if(Objects.equals(Parser.currentToken.getCategory(), "IFTK")) {
+        else if(checkCurrentTokenCategory("IFTK")) {
             ArrayList<Stmt> stmtList = new ArrayList<>();
 
             Token ifTK = Parser.checkCategory("IFTK");
@@ -258,13 +258,13 @@ public class Stmt extends Node{
             Token rightParent = Parser.checkCategory("RPARENT");
             Token elseTK = null;
             stmtList.add(makeStmt());
-            if(Objects.equals(Parser.currentToken.getCategory(), "ELSETK")) {
+            if(checkCurrentTokenCategory("ELSETK")) {
                 elseTK = Parser.checkCategory("ELSETK");
                 stmtList.add(makeStmt());
             }
             return new Stmt(StmtType.If, ifTK, leftParent, cond, rightParent, stmtList, elseTK);
         }
-        else if(Objects.equals(Parser.currentToken.getCategory(), "FORTK")) {
+        else if(checkCurrentTokenCategory("FORTK")) {
             Token forTK = Parser.checkCategory("FORTK");
             Token leftParent = Parser.checkCategory("LPARENT");
             ForStmt forStmt1 = null;
@@ -272,48 +272,48 @@ public class Stmt extends Node{
             ArrayList<Token> semicolons = new ArrayList<>();
             ArrayList<Stmt> stmtArrayList1 = new ArrayList<>();
             Cond cond = null;
-            if(!Objects.equals(Parser.currentToken.getCategory(), "SEMICN")) {
+            if(!checkCurrentTokenCategory("SEMICN")) {
                 forStmt1 = ForStmt.makeForStmt();
             }
             semicolons.add(Parser.checkCategory("SEMICN"));
-            if(!Objects.equals(Parser.currentToken.getCategory(), "SEMICN")) {
+            if(!checkCurrentTokenCategory("SEMICN")) {
                 cond = Cond.makeCond();
             }
             semicolons.add(Parser.checkCategory("SEMICN"));
-            if(!Objects.equals(Parser.currentToken.getCategory(), "RPARENT")) {
+            if(!checkCurrentTokenCategory("RPARENT")) {
                 forStmt2 = ForStmt.makeForStmt();
             }
             Token rightParent = Parser.checkCategory("RPARENT");
             stmtArrayList1.add(makeStmt());
             return new Stmt(StmtType.For, semicolons, leftParent, cond, rightParent, forTK, forStmt1, forStmt2, stmtArrayList1);
         }
-        else if(Objects.equals(Parser.currentToken.getCategory(), "BREAKTK")) {
+        else if(checkCurrentTokenCategory("BREAKTK")) {
             Token breakTK = Parser.checkCategory("BREAKTK");
             Token semicolon = Parser.checkCategory("SEMICN");
             return new Stmt(StmtType.Break, semicolon, breakTK);
         }
-        else if(Objects.equals(Parser.currentToken.getCategory(), "CONTINUETK")) {
+        else if(checkCurrentTokenCategory("CONTINUETK")) {
             Token continueTK = Parser.checkCategory("CONTINUETK");
             Token semicolon = Parser.checkCategory("SEMICN");
             return new Stmt(StmtType.Continue, semicolon, continueTK);
         }
-        else if(Objects.equals(Parser.currentToken.getCategory(), "RETURNTK")) {
+        else if(checkCurrentTokenCategory("RETURNTK")) {
             Token returnTK = Parser.checkCategory("RETURNTK");
             Exp exp = null;
-            if(!Objects.equals(Parser.currentToken.getCategory(), "SEMICN")) {
+            if(!checkCurrentTokenCategory("SEMICN")) {
                 exp = Exp.makeExp();
             }
             Token semicolon = Parser.checkCategory("SEMICN");
             return new Stmt(StmtType.Return, exp, semicolon, returnTK);
         }
-        else if(Objects.equals(Parser.currentToken.getCategory(), "PRINTFTK")) {
+        else if(checkCurrentTokenCategory("PRINTFTK")) {
             Token printfTK = Parser.checkCategory("PRINTFTK");
             Token leftParent = Parser.checkCategory("LPARENT");
             Token formatString = Parser.checkCategory("STRCON");
 
             ArrayList<Token> commas = new ArrayList<>();
             ArrayList<Exp> exps = new ArrayList<>();
-            while(Objects.equals(Parser.currentToken.getCategory(), "COMMA")) {
+            while(checkCurrentTokenCategory("COMMA")) {
                 commas.add(Parser.checkCategory("COMMA"));
                 exps.add(Exp.makeExp());
             }
@@ -334,7 +334,7 @@ public class Stmt extends Node{
                 // LVal
                 LVal lVal = LVal.makeLVal();
                 Token assign = Parser.checkCategory("ASSIGN");
-                if(!Objects.equals(Parser.currentToken.getCategory(), "GETINTTK")) {
+                if(!checkCurrentTokenCategory("GETINTTK")) {
                     // LVal '=' Exp ';'
                     Exp exp = Exp.makeExp();
                     Token semicolon = Parser.checkCategory("SEMICN");
@@ -351,7 +351,7 @@ public class Stmt extends Node{
             else {
                 // [Exp] ';'
                 Exp exp = null;
-                if(!Objects.equals(Parser.currentToken.getCategory(), "SEMICN")) {
+                if(!checkCurrentTokenCategory("SEMICN")) {
                     exp = Exp.makeExp();
                 }
                 Token semicolon = Parser.checkCategory("SEMICN");

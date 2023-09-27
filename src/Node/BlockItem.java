@@ -5,7 +5,7 @@ import Parse.Parser;
 import java.util.Objects;
 
 // 语句块项 BlockItem → Decl | Stmt
-public class BlockItem {
+public class BlockItem extends Node {
     private Decl decl;
     private Stmt stmt;
 
@@ -35,7 +35,7 @@ public class BlockItem {
     }
 
     public static BlockItem makeBlockItem() {
-        if(Objects.equals(Parser.currentToken.getCategory(), "CONSTTK") || Objects.equals(Parser.currentToken.getCategory(), "INTTK")) {
+        if(checkCurrentTokenCategory("CONSTTK") || checkCurrentTokenCategory("INTTK")) {
             Decl decl = Decl.makeDecl();
             return new BlockItem(decl);
         }

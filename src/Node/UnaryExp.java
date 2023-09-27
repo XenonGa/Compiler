@@ -80,17 +80,17 @@ public class UnaryExp extends Node{
     }
 
     public static UnaryExp makeUnaryExp() {
-        if(Objects.equals(Parser.currentToken.getCategory(), "IDENFR") && Objects.equals(Parser.tokenArrayList.get(Parser.index + 1).getCategory(), "LPARENT")) {
+        if(checkCurrentTokenCategory("IDENFR") && Objects.equals(Parser.tokenArrayList.get(Parser.index + 1).getCategory(), "LPARENT")) {
             Token identifier = Parser.checkCategory("IDENFR");
             Token leftParent = Parser.checkCategory("LPARENT");
             FuncRParams funcRParams1 = null;
-            if(!Objects.equals(Parser.currentToken.getCategory(), "RPARENT")) {
+            if(!checkCurrentTokenCategory("RPARENT")) {
                 funcRParams1 = FuncRParams.makeFuncParams();
             }
             Token rightParent = Parser.checkCategory("RPARENT");
             return new UnaryExp(identifier, leftParent, funcRParams1, rightParent);
         }
-        else if(Objects.equals(Parser.currentToken.getCategory(), "PLUS") || Objects.equals(Parser.currentToken.getCategory(), "MINU") || Objects.equals(Parser.currentToken.getCategory(), "NOT")) {
+        else if(checkCurrentTokenCategory( "PLUS") || checkCurrentTokenCategory("MINU") || checkCurrentTokenCategory("NOT")) {
             UnaryOp unaryOp1 = UnaryOp.makeUnaryOp();
             UnaryExp unaryExp1 = UnaryExp.makeUnaryExp();
             return new UnaryExp(unaryOp1, unaryExp1);

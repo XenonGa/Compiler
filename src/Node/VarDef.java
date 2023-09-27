@@ -65,12 +65,12 @@ public class VarDef extends Node {
         ArrayList<Token> rightBrackets = new ArrayList<>();
 
         Token identifier = Parser.checkCategory("IDENFR");
-        while(Objects.equals(Parser.currentToken.getCategory(), "LBRACK")) {
+        while(checkCurrentTokenCategory("LBRACK")) {
             leftBrackets.add(Parser.checkCategory("LBRACK"));
             constExps.add(ConstExp.makeConstExp());
             rightBrackets.add(Parser.checkCategory("RBRACK"));
         }
-        if(Objects.equals(Parser.currentToken.getCategory(), "ASSIGN")) {
+        if(checkCurrentTokenCategory("ASSIGN")) {
             Token assign1 = Parser.checkCategory("ASSIGN");
             InitVal initVal1 = InitVal.makeInitVal();
             return new VarDef(identifier, leftBrackets, constExps, rightBrackets, assign1, initVal1);

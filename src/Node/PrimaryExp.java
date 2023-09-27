@@ -8,7 +8,7 @@ import Parse.Parser;
 import java.util.Objects;
 
 // 基本表达式 PrimaryExp → '(' Exp ')' | LVal | Number
-public class PrimaryExp {
+public class PrimaryExp extends Node {
     private Token leftParent;
     private Exp exp;
     private Token rightParent;
@@ -57,13 +57,13 @@ public class PrimaryExp {
     }
 
     public static PrimaryExp makePrimaryExp() {
-        if(Objects.equals(Parser.currentToken.getCategory(), "LPARENT")) {
+        if(checkCurrentTokenCategory("LPARENT")) {
             Token leftParent1 = Parser.checkCategory("LPARENT");
             Exp exp1 = Exp.makeExp();
             Token rightParent1 = Parser.checkCategory("RPARENT");
             return new PrimaryExp(leftParent1, exp1, rightParent1);
         }
-        else if(Objects.equals(Parser.currentToken.getCategory(), "INTCON")) {
+        else if(checkCurrentTokenCategory("INTCON")) {
             NumberNode numberNode1 = NumberNode.makeNumberNode();
             return new PrimaryExp(numberNode1);
         }

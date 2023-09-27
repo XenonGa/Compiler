@@ -45,11 +45,11 @@ public class EqExp extends Node {
         Token sign = null;
         EqExp eqExp = null;
 
-        if(Objects.equals(Parser.currentToken.getCategory(), "EQL")) {
+        if(checkCurrentTokenCategory("EQL")) {
             sign = Parser.checkCategory("EQL");
             eqExp = makeEqExp();
         }
-        else if(Objects.equals(Parser.currentToken.getCategory(), "NEQ")) {
+        else if(checkCurrentTokenCategory("NEQ")) {
             sign = Parser.checkCategory("NEQ");
             eqExp = makeEqExp();
         }

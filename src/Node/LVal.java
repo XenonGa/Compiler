@@ -48,7 +48,7 @@ public class LVal extends Node {
         ArrayList<Token> rightBrackets = new ArrayList<>();
 
         Token identifier = Parser.checkCategory("IDENFR");
-        while(Objects.equals(Parser.currentToken.getCategory(), "LBRACK")) {
+        while(checkCurrentTokenCategory("LBRACK")) {
             leftBrackets.add(Parser.checkCategory("LBRACK"));
             exps.add(Exp.makeExp());
             rightBrackets.add(Parser.checkCategory("RBRACK"));

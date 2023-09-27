@@ -45,15 +45,15 @@ public class MulExp extends Node {
         Token sign = null;
         MulExp mulExp = null;
 
-        if(Objects.equals(Parser.currentToken.getCategory(), "MULT")) {
+        if(checkCurrentTokenCategory("MULT")) {
             sign = Parser.checkCategory("MULT");
             mulExp = makeMulExp();
         }
-        else if(Objects.equals(Parser.currentToken.getCategory(), "DIV")) {
+        else if(checkCurrentTokenCategory("DIV")) {
             sign = Parser.checkCategory("DIV");
             mulExp = makeMulExp();
         }
-        else if(Objects.equals(Parser.currentToken.getCategory(), "MOD")) {
+        else if(checkCurrentTokenCategory("MOD")) {
             sign = Parser.checkCategory("MOD");
             mulExp = makeMulExp();
         }

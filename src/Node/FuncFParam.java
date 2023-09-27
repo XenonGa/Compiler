@@ -58,10 +58,10 @@ public class FuncFParam extends Node{
 
         BType bType1 = BType.makeBType();
         Token identifier = Parser.checkCategory("IDENFR");
-        if(Objects.equals(Parser.currentToken.getCategory(), "LBRACK")){
+        if(checkCurrentTokenCategory("LBRACK")){
             leftBrackets.add(Parser.checkCategory("LBRACK"));
             rightBrackets.add(Parser.checkCategory("RBRACK"));
-            if(Objects.equals(Parser.currentToken.getCategory(), "LBRACK")){
+            if(checkCurrentTokenCategory("LBRACK")){
                 leftBrackets.add(Parser.checkCategory("LBRACK"));
                 constExp1 = ConstExp.makeConstExp();
                 rightBrackets.add(Parser.checkCategory("RBRACK"));

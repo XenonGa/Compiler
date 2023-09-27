@@ -55,14 +55,14 @@ public class ConstInitVal extends Node {
     }
 
     public static ConstInitVal makeConstInitVal() {
-        if(Objects.equals(Parser.currentToken.getCategory(), "LBRACE")) {
+        if(checkCurrentTokenCategory( "LBRACE")) {
             ArrayList<ConstInitVal> constInitVals = new ArrayList<>();
             ArrayList<Token> commas = new ArrayList<>();
 
             Token leftBrace = Parser.checkCategory("LBRACE");
-            if(!Objects.equals(Parser.currentToken.getCategory(), "RBRACE")) {
+            if(!checkCurrentTokenCategory("RBRACE")) {
                 constInitVals.add(makeConstInitVal());
-                while (!Objects.equals(Parser.currentToken.getCategory(), "RBRACE")) {
+                while (!checkCurrentTokenCategory("RBRACE")) {
                     commas.add(Parser.checkCategory("COMMA"));
                     constInitVals.add(makeConstInitVal());
                 }

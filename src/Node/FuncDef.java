@@ -56,7 +56,7 @@ public class FuncDef extends Node{
         Token identifier = Parser.checkCategory("IDENFR");
         Token leftParent1 = Parser.checkCategory("LPARENT");
         FuncFParams funcFParams1 = null;
-        if(!Objects.equals(Parser.currentToken.getCategory(), "RPARENT")) {
+        if(!checkCurrentTokenCategory("RPARENT")) {
             funcFParams1 = FuncFParams.makeFuncFParams();
         }
         Token rightParent1 = Parser.checkCategory("RPARENT");

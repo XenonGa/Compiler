@@ -45,7 +45,7 @@ public class LOrExp extends Node {
         Token sign = null;
         LOrExp lOrExp1 = null;
 
-        if(Objects.equals(Parser.currentToken.getCategory(), "OR")) {
+        if(checkCurrentTokenCategory("OR")) {
             sign = Parser.checkCategory("OR");
             lOrExp1 = makeLOrExp();
         }

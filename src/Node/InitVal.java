@@ -55,15 +55,15 @@ public class InitVal extends Node {
         ArrayList<InitVal> initVals = new ArrayList<>();
         ArrayList<Token> commas = new ArrayList<>();
 
-        if(!Objects.equals(Parser.currentToken.getCategory(), "LBRACE")) {
+        if(!checkCurrentTokenCategory("LBRACE")) {
             Exp exp1 = Exp.makeExp();
             return new InitVal(exp1);
         }
         else {
             Token leftBrace1 = Parser.checkCategory("LBRACE");
-            if(!Objects.equals(Parser.currentToken.getCategory(), "RBRACE")) {
+            if(!checkCurrentTokenCategory("RBRACE")) {
                 initVals.add(InitVal.makeInitVal());
-                while(Objects.equals(Parser.currentToken.getCategory(), "COMMA")) {
+                while(checkCurrentTokenCategory("COMMA")) {
                     commas.add(Parser.checkCategory("COMMA"));
                     initVals.add(InitVal.makeInitVal());
                 }

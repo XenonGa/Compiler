@@ -26,10 +26,10 @@ public class UnaryOp extends Node {
 
     public static UnaryOp makeUnaryOp() {
         Token sign = null;
-        if(Objects.equals(Parser.currentToken.getCategory(), "PLUS")) {
+        if(checkCurrentTokenCategory("PLUS")) {
             sign = Parser.checkCategory("PLUS");
         }
-        else if(Objects.equals(Parser.currentToken.getCategory(), "MINU")) {
+        else if(checkCurrentTokenCategory("MINU")) {
             sign = Parser.checkCategory("MINU");
         }
         else {

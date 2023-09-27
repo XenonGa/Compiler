@@ -45,19 +45,19 @@ public class RelExp extends Node {
         Token sign = null;
         RelExp relExp = null;
 
-        if(Objects.equals(Parser.currentToken.getCategory(), "LSS")) {
+        if(checkCurrentTokenCategory("LSS")) {
             sign = Parser.checkCategory("LSS");
             relExp = makeRelExp();
         }
-        else if(Objects.equals(Parser.currentToken.getCategory(), "GRE")) {
+        else if(checkCurrentTokenCategory( "GRE")) {
             sign = Parser.checkCategory("GRE");
             relExp = makeRelExp();
         }
-        else if(Objects.equals(Parser.currentToken.getCategory(), "LEQ")) {
+        else if(checkCurrentTokenCategory("LEQ")) {
             sign = Parser.checkCategory("LEQ");
             relExp = makeRelExp();
         }
-        else if(Objects.equals(Parser.currentToken.getCategory(), "GEQ")) {
+        else if(checkCurrentTokenCategory("GEQ")) {
             sign = Parser.checkCategory("GEQ");
             relExp = makeRelExp();
         }

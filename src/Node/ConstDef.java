@@ -56,7 +56,7 @@ public class ConstDef extends Node {
         ArrayList<Token> rightBrackets = new ArrayList<>();
 
         Token identifier = Parser.checkCategory("IDENFR");
-        while(Objects.equals(Parser.currentToken.getCategory(), "LBRACK")) {
+        while(checkCurrentTokenCategory("LBRACK")) {
             leftBrackets.add(Parser.checkCategory("LBRACK"));
             constExps.add(ConstExp.makeConstExp());
             rightBrackets.add(Parser.checkCategory("RBRACK"));

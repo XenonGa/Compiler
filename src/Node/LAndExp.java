@@ -45,7 +45,7 @@ public class LAndExp extends Node {
         Token sign = null;
         LAndExp lAndExp1 = null;
 
-        if(Objects.equals(Parser.currentToken.getCategory(), "AND")) {
+        if(checkCurrentTokenCategory("AND")) {
             sign = Parser.checkCategory("AND");
             lAndExp1 = makeLAndExp();
         }

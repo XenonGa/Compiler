@@ -40,7 +40,7 @@ public class VarDecl extends Node {
 
         BType bType1 = BType.makeBType();
         varDefs.add(VarDef.makeVarDef());
-        while(Objects.equals(Parser.currentToken.getCategory(), "COMMA")) {
+        while(checkCurrentTokenCategory("COMMA")) {
             commas.add(Parser.checkCategory("COMMA"));
             varDefs.add(VarDef.makeVarDef());  
         }

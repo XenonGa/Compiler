@@ -36,7 +36,7 @@ public class FuncRParams extends Node{
         ArrayList<Token> commas = new ArrayList<>();
 
         exps.add(Exp.makeExp());
-        while(Objects.equals(Parser.currentToken.getCategory(), "COMMA")) {
+        while(checkCurrentTokenCategory("COMMA")) {
             commas.add(Parser.checkCategory("COMMA"));
             exps.add(Exp.makeExp());
         }

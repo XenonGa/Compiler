@@ -37,7 +37,7 @@ public class Block extends Node{
         ArrayList<BlockItem> blockItems = new ArrayList<>();
 
         Token leftBrace1 = Parser.checkCategory("LBRACE");
-        while(!Objects.equals(Parser.currentToken.getCategory(), "RBRACE")) {
+        while(!checkCurrentTokenCategory("RBRACE")) {
             blockItems.add(BlockItem.makeBlockItem());
         }
         Token rightBrace1 = Parser.checkCategory("RBRACE");

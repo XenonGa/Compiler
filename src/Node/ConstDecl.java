@@ -52,7 +52,7 @@ public class ConstDecl extends Node {
         Token constTK1 = Parser.checkCategory("CONSTTK");
         BType bType1 = BType.makeBType();
         constDefs.add(ConstDef.makeConstDef());
-        while(Objects.equals(Parser.currentToken.getCategory(), "COMMA")) {
+        while(checkCurrentTokenCategory("COMMA")) {
             commas.add(Parser.checkCategory("COMMA"));
             constDefs.add(ConstDef.makeConstDef());
         }
