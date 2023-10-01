@@ -47,4 +47,8 @@ public class VarDecl extends Node {
         semicolon = Parser.checkCategory("SEMICN");
         return new VarDecl(bType1, varDefs, commas, semicolon);
     }
+
+    public static void varDeclErrorHandler(VarDecl varDecl) {
+
+    }
 }

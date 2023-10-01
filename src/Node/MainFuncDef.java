@@ -41,4 +41,8 @@ public class MainFuncDef extends Node{
         Block block1 = Block.makeBlock();
         return new MainFuncDef(intTK1, mainTK1, leftParent1, rightParent1, block1);
     }
+
+    public static void mainFuncDefErrorHandler(MainFuncDef mainFuncDef) {
+
+    }
 }

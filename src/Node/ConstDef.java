@@ -65,4 +65,8 @@ public class ConstDef extends Node {
         ConstInitVal constInitVal1 = ConstInitVal.makeConstInitVal();
         return new ConstDef(identifier, leftBrackets, constExps, rightBrackets, assign1, constInitVal1);
     }
+
+    public static void ConstDefErrorHandler(ConstDef constDef) {
+
+    }
 }

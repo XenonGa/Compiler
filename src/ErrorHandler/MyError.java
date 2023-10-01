@@ -1,10 +1,10 @@
 package ErrorHandler;
 
-public class Error {
+public class MyError {
     private String error_type;
     private int error_line_num;
 
-    public Error(String error_type, int error_line_num) {
+    public MyError(String error_type, int error_line_num) {
         this.error_type = error_type;
         this.error_line_num = error_line_num;
     }
@@ -18,6 +18,6 @@ public class Error {
     }
 
     public String writeError() {
-        return error_line_num + " " + error_type;
+        return error_line_num + " " + error_type + "\n";
     }
 }

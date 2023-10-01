@@ -51,4 +51,15 @@ public class CompUnit extends Node{
         mainFuncDef1 = MainFuncDef.makeMainFuncDef();
         return new CompUnit(decls, funcDefs, mainFuncDef1);
     }
+
+    public static void CompUnitErrorHandler(CompUnit compUnit) {
+        ////////////////////////////////
+        for(Decl decl : compUnit.declArrayList) {
+            Decl.DeclErrorHandler(decl);
+        }
+        for(FuncDef funcDef : compUnit.funcDefArrayList) {
+            FuncDef.funcDefErrorHandler(funcDef);
+        }
+        MainFuncDef.mainFuncDefErrorHandler(compUnit.mainFuncDef);
+    }
 }

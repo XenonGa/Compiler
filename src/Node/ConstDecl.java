@@ -59,4 +59,10 @@ public class ConstDecl extends Node {
         semicolon = Parser.checkCategory("SEMICN");
         return new ConstDecl(constTK1, bType1, constDefs, commas, semicolon);
     }
+
+    public static void constDeclErrorHandler(ConstDecl constDecl) {
+        for(ConstDef constDef : constDecl.constDefArrayList) {
+            ConstDef.ConstDefErrorHandler(constDef);
+        }
+    }
 }

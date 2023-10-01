@@ -1,5 +1,7 @@
 package Parse;
 
+import ErrorHandler.ErrorHandler;
+import ErrorHandler.MyError;
 import LexicalAnalysis.Token;
 import Node.CompUnit;
 
@@ -31,10 +33,27 @@ public class Parser {
             }
             return temp;
         }
-        return null;
+        else if(Objects.equals(category, "SEMICN")) {
+            addError("i");
+            return new Token("SEMICN", ";", tokenArrayList.get(index - 1).getLineNumber());
+        }
+        else if(Objects.equals(category, "RBRACK")) {
+            addError("j");
+            return new Token("RBRACK", "]", tokenArrayList.get(index - 1).getLineNumber());
+        }
+        else if(Objects.equals(category, "RPARENT")) {
+            addError("k");
+            return new Token("RPARENT", ")", tokenArrayList.get(index - 1).getLineNumber());
+        }
+        else return null;
     }
 
     public void writeNodeParser() {
         compUnit.writeNode();
+    }
+
+    public static void addError(String errorType) {
+        MyError newError = new MyError(errorType, tokenArrayList.get(index - 1).getLineNumber());
+        ErrorHandler.addNewError(newError);
     }
 }

@@ -40,4 +40,13 @@ public class Decl extends Node {
             return new Decl(varDecl);
         }
     }
+
+    public static void DeclErrorHandler(Decl decl) {
+        if(decl.constDecl != null) {
+            ConstDecl.constDeclErrorHandler(decl.constDecl);
+        }
+        else {
+            VarDecl.varDeclErrorHandler(decl.varDecl);
+        }
+    }
 }

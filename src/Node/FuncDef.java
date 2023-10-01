@@ -63,4 +63,8 @@ public class FuncDef extends Node{
         Block block1 = Block.makeBlock();
         return new FuncDef(funcType1, identifier, leftParent1, funcFParams1, rightParent1, block1);
     }
+
+    public static void funcDefErrorHandler(FuncDef funcDef) {
+
+    }
 }
