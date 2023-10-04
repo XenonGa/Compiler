@@ -1,9 +1,13 @@
 package Node;
 
+import ErrorHandler.ErrorHandler;
 import FileProcess.MyFileWriter;
+import Identifier.Identifier;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
+import ErrorHandler.MyError;
+import Identifier.ValIdent;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -67,6 +71,21 @@ public class ConstDef extends Node {
     }
 
     public static void ConstDefErrorHandler(ConstDef constDef) {
+        if(ErrorHandler.isIdentConflicted(constDef.ident.getToken())) {
+            MyError error = new MyError("b", constDef.ident.getLineNumber());
+            ErrorHandler.addNewError(error);
+            return;
+        }
+        if(!constDef.constExpArrayList.isEmpty()) {
+            for(ConstExp constExp : constDef.constExpArrayList) {
+                ConstExp.constExpErrorHandler(constExp);
+            }
+        }
 
+        String name = constDef.ident.getToken();
+        Identifier ident = new ValIdent(name, true, constDef.constExpArrayList.size());
+        ErrorHandler.addInSymbolTable(name, ident);
+
+        ConstInitVal.constInitValErrorHandler(constDef.constInitVal);
     }
 }

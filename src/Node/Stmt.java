@@ -1,11 +1,12 @@
 package Node;
 
+import ErrorHandler.*;
 import FileProcess.MyFileWriter;
+import Identifier.*;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -160,6 +161,10 @@ public class Stmt extends Node{
 
     public ArrayList<Exp> getExpArrayList() {
         return expArrayList;
+    }
+
+    public Token getReturnTK() {
+        return returnTK;
     }
 
     public void writeNode() {
@@ -358,5 +363,91 @@ public class Stmt extends Node{
                 return new Stmt(StmtType.Exp, exp, semicolon);
             }
         }
+    }
+
+    public static void stmtErrorHandler(Stmt stmt) {
+        switch (stmt.stmtType) {
+            case LVal_Assign_Exp -> {
+                Exp.expErrorHandler(stmt.exp);
+            }
+            case Exp -> {
+                if(stmt.exp != null) Exp.expErrorHandler(stmt.exp);
+            }
+            case Block -> {
+                ErrorHandler.pushSymbolTable(false,null);
+                Block.blockErrorHandler(stmt.block);
+                ErrorHandler.popSymbolTable();
+            }
+            case If -> {
+                Cond.condErrorHandler(stmt.cond);
+                stmtErrorHandler(stmt.stmtArrayList.get(0));
+                if(stmt.stmtArrayList.size() > 1) {
+                    stmtErrorHandler(stmt.stmtArrayList.get(1));
+                }
+            }
+            case For -> {
+                if(stmt.forStmt1 != null) {
+                    ForStmt.forStmtErrorHandler(stmt.forStmt1);
+                }
+                if(stmt.cond != null) {
+                    Cond.condErrorHandler(stmt.cond);
+                }
+                if(stmt.forStmt2 != null) {
+                    ForStmt.forStmtErrorHandler(stmt.forStmt2);
+                }
+                ErrorHandler.forFlag += 1;
+                stmtErrorHandler(stmt.stmtArrayList.get(0));
+                ErrorHandler.forFlag -= 1;
+            }
+            case Break -> {
+
+            }
+            case Continue -> {
+                if(ErrorHandler.forFlag == 0) {
+                    MyError error = new MyError("m", stmt.continueTK.getLineNumber());
+                    ErrorHandler.addNewError(error);
+                }
+            }
+            case Return -> {
+                if(ErrorHandler.isInFunction()) {
+                    if(stmt.exp != null) {
+                        if(Objects.equals(ErrorHandler.getFunctionType(), "void")) {
+                            MyError error = new MyError("f", stmt.returnTK.getLineNumber());
+                            ErrorHandler.addNewError(error);
+                        }
+                        Exp.expErrorHandler(stmt.exp);
+                    }
+                }
+            }
+            case LVal_Assign_Getint -> {
+                LVal.lValErrorHandler(stmt.lVal);
+                Identifier lValIdent = ErrorHandler.getIdentifier(stmt.lVal.getIdent().getToken());
+                if(lValIdent instanceof ValIdent val) {
+                    if(val.isConstFlag()) {
+                        MyError error = new MyError("h", stmt.lVal.getIdent().getLineNumber());
+                        ErrorHandler.addNewError(error);
+                    }
+                }
+            }
+            case Printf -> {
+                int expNum = stmt.expArrayList.size();
+                int valNum = 0;
+                String formatString = stmt.formatString.getToken();
+                for(int i = 0; i < formatString.length(); i++) {
+                    if(formatString.charAt(i) == '%') {
+                        if(formatString.charAt(i + 1) == 'd') {
+                            valNum = valNum + 1;
+                        }
+                    }
+                }
+                if(expNum != valNum) {
+                    MyError error = new MyError("l", stmt.printfTK.getLineNumber());
+                    ErrorHandler.addNewError(error);
+                }
+                for(Exp exp : stmt.expArrayList) {
+                    Exp.expErrorHandler(exp);
+                }
+            }
         }
+    }
 }

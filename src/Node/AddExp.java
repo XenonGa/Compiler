@@ -1,6 +1,7 @@
 package Node;
 
 import FileProcess.MyFileWriter;
+import Identifier.FuncParam;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
@@ -53,5 +54,16 @@ public class AddExp extends Node {
             addExp = makeAddExp();
         }
         return new AddExp(mulExp, addExp, sign);
+    }
+
+    public static void addExpErrorHandler(AddExp addExp) {
+        MulExp.mulExpErrorHandler(addExp.mulExp);
+        if(addExp.addExp != null) {
+            addExpErrorHandler(addExp.addExp);
+        }
+    }
+
+    public static FuncParam getFuncParamFromAddExp(AddExp addExp) {
+        return MulExp.getFuncParamFromMulExp(addExp.mulExp);
     }
 }

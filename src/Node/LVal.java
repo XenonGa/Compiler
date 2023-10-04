@@ -1,6 +1,8 @@
 package Node;
 
+import ErrorHandler.*;
 import FileProcess.MyFileWriter;
+import Identifier.FuncParam;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
@@ -54,5 +56,19 @@ public class LVal extends Node {
             rightBrackets.add(Parser.checkCategory("RBRACK"));
         }
         return new LVal(identifier, leftBrackets, exps, rightBrackets);
+    }
+
+    public static void lValErrorHandler(LVal lVal) {
+        if(!ErrorHandler.isDeclared(lVal.ident.getToken())) {
+            MyError error = new MyError("c", lVal.ident.getLineNumber());
+            ErrorHandler.addNewError(error);
+        }
+        for(Exp exp : lVal.expArrayList) {
+            Exp.expErrorHandler(exp);
+        }
+    }
+
+    public static FuncParam getFuncParamFromLVal(LVal lVal) {
+        return new FuncParam(lVal.ident.getToken(), lVal.expArrayList.size());
     }
 }

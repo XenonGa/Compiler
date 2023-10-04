@@ -51,4 +51,11 @@ public class LAndExp extends Node {
         }
         return new LAndExp(eqExp1, sign, lAndExp1);
     }
+
+    public static void lAndExpErrorHandler(LAndExp lAndExp) {
+        EqExp.eqExpErrorHandler(lAndExp.eqExp);
+        if(lAndExp.lAndExp != null) {
+            lAndExpErrorHandler(lAndExp.lAndExp);
+        }
+    }
 }

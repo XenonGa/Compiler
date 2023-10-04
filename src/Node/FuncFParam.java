@@ -1,9 +1,12 @@
 package Node;
 
 import FileProcess.MyFileWriter;
+import Identifier.Identifier;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
+import ErrorHandler.*;
+import Identifier.*;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -30,6 +33,10 @@ public class FuncFParam extends Node{
 
     public Token getIdent() {
         return ident;
+    }
+
+    public ArrayList<Token> getLeftBracketArrayList() {
+        return leftBracketArrayList;
     }
 
     public ConstExp getConstExp() {
@@ -69,5 +76,15 @@ public class FuncFParam extends Node{
         }
         return new FuncFParam(bType1, identifier, leftBrackets, rightBrackets, constExp1);
 
+    }
+
+    public static void funcFParamErrorHandler(FuncFParam funcFParam) {
+        String name = funcFParam.ident.getToken();
+        if(ErrorHandler.isIdentConflicted(name)) {
+            MyError myError = new MyError("b", funcFParam.ident.getLineNumber());
+            ErrorHandler.addNewError(myError);
+        }
+        Identifier ident = new ValIdent(name, false, funcFParam.getLeftBracketArrayList().size());
+        ErrorHandler.addInSymbolTable(name, ident);
     }
 }

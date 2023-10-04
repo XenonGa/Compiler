@@ -6,9 +6,9 @@ import java.util.ArrayList;
 public class FuncIdent extends Identifier {
     private String funcName;
     private String funcType;
-    private ArrayList<String> FuncParams;
+    private ArrayList<FuncParam> FuncParams;
 
-    public FuncIdent(String funcName, String funcType, ArrayList<String> funcParams) {
+    public FuncIdent(String funcName, String funcType, ArrayList<FuncParam> funcParams) {
         this.funcName = funcName;
         this.funcType = funcType;
         FuncParams = funcParams;
@@ -22,7 +22,7 @@ public class FuncIdent extends Identifier {
         return funcType;
     }
 
-    public ArrayList<String> getFuncParams() {
+    public ArrayList<FuncParam> getFuncParams() {
         return FuncParams;
     }
 }

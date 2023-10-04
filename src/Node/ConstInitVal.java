@@ -75,4 +75,14 @@ public class ConstInitVal extends Node {
             return new ConstInitVal(constExp1);
         }
     }
+
+    public static void constInitValErrorHandler(ConstInitVal constInitVal) {
+        if(constInitVal.constExp != null) {
+            ConstExp.constExpErrorHandler(constInitVal.constExp);
+            return;
+        }
+        for(ConstInitVal constInitVal1 : constInitVal.constInitValArrayList) {
+            constInitValErrorHandler(constInitVal1);
+        }
+    }
 }

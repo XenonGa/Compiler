@@ -63,4 +63,11 @@ public class RelExp extends Node {
         }
         return new RelExp(addExp, relExp, sign);
     }
+
+    public static void relExpErrorHandler(RelExp relExp) {
+        AddExp.addExpErrorHandler(relExp.addExp);
+        if(relExp.relExp != null) {
+            relExpErrorHandler(relExp.relExp);
+        }
+    }
 }

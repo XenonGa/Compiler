@@ -55,4 +55,11 @@ public class EqExp extends Node {
         }
         return new EqExp(relExp, eqExp, sign);
     }
+
+    public static void eqExpErrorHandler(EqExp eqExp) {
+        RelExp.relExpErrorHandler(eqExp.relExp);
+        if(eqExp.eqExp != null) {
+            eqExpErrorHandler(eqExp.eqExp);
+        }
+    }
 }

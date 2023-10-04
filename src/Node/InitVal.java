@@ -72,4 +72,14 @@ public class InitVal extends Node {
             return new InitVal(leftBrace1, initVals, commas, rightBrace1);
         }
     }
+
+    public static void initValErrorHandler(InitVal initVal) {
+        if(initVal.exp != null) {
+            Exp.expErrorHandler(initVal.exp);
+            return;
+        }
+        for(InitVal initVal1 : initVal.initValArrayList) {
+            initValErrorHandler(initVal1);
+        }
+    }
 }

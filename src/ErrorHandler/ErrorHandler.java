@@ -11,6 +11,7 @@ import java.util.HashMap;
 public class ErrorHandler {
     public static ArrayList<MyError> errorArrayList = new ArrayList<>();
     public static ArrayList<SymbolTable> symbolTableStack = new ArrayList<>();
+    public static int forFlag = 0;
 
     public static ArrayList<MyError> getErrorArrayList() {
         return errorArrayList;
@@ -18,7 +19,7 @@ public class ErrorHandler {
 
     public static void addNewError(MyError error) {
         for (MyError value : errorArrayList) {
-            if (value.equals(error)) return;
+            if (value.isSameLine(error.getError_line_num())) return;
         }
         errorArrayList.add(error);
     }
@@ -44,8 +45,8 @@ public class ErrorHandler {
     }
 
     public static boolean isDeclared(String name) {
-        for(SymbolTable symbol : symbolTableStack) {
-            if(symbol.getSymbols().containsKey(name)) return true;
+        for(int i = symbolTableStack.size() - 1; i >= 0; i--) {
+            if(symbolTableStack.get(i).getSymbols().containsKey(name)) return true;
         }
         return false;
     }
@@ -55,22 +56,22 @@ public class ErrorHandler {
     }
 
     public static Identifier getIdentifier(String name) {
-        for (SymbolTable symbol : symbolTableStack) {
-            if(symbol.getSymbols().containsKey(name)) return symbol.getSymbols().get(name);
+        for (int i = symbolTableStack.size() - 1; i >= 0; i--) {
+            if(symbolTableStack.get(i).getSymbols().containsKey(name)) return symbolTableStack.get(i).getSymbols().get(name);
         }
         return null;
     }
 
     public static boolean isInFunction() {
-        for(SymbolTable symbol : symbolTableStack) {
-            if(symbol.isFunction()) return true;
+        for(int i = symbolTableStack.size() - 1; i >= 0; i--) {
+            if(symbolTableStack.get(i).isFunction()) return true;
         }
         return false;
     }
 
     public static String getFunctionType() {
-        for(SymbolTable symbol : symbolTableStack) {
-            if(symbol.isFunction()) return symbol.getFunctionType();
+        for(int i = symbolTableStack.size() - 1; i >= 0; i--) {
+            if(symbolTableStack.get(i).isFunction()) return symbolTableStack.get(i).getFunctionType();
         }
         return null;
     }

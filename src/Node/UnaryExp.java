@@ -1,10 +1,13 @@
 package Node;
 
+import ErrorHandler.*;
 import FileProcess.MyFileWriter;
+import Identifier.*;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 // 一元表达式 UnaryExp → PrimaryExp | Ident '(' [FuncRParams] ')' | UnaryOp UnaryExp
@@ -98,6 +101,101 @@ public class UnaryExp extends Node{
         else {
             PrimaryExp primaryExp1 = PrimaryExp.makePrimaryExp();
             return new UnaryExp(primaryExp1);
+        }
+    }
+
+    public static void unaryExpErrorHandler(UnaryExp unaryExp) {
+        if(unaryExp.primaryExp != null) {
+            PrimaryExp.primaryExpErrorHandler(unaryExp.primaryExp);
+        }
+        else if(unaryExp.unaryExp != null) {
+            unaryExpErrorHandler(unaryExp.unaryExp);
+        }
+        else {
+            // define checking
+            if(!ErrorHandler.isDeclared(unaryExp.ident.getToken())) {
+                MyError error = new MyError("c", unaryExp.ident.getLineNumber());
+                ErrorHandler.addNewError(error);
+                return;
+            }
+
+            // is function checking
+            Identifier ident = ErrorHandler.getIdentifier(unaryExp.ident.getToken());
+            if(!(ident instanceof FuncIdent funcIdent)) {
+                MyError error = new MyError("e", unaryExp.ident.getLineNumber());
+                ErrorHandler.addNewError(error);
+                return;
+            }
+
+            // params consistency checking
+            if(unaryExp.funcRParams == null && !funcIdent.getFuncParams().isEmpty()) {
+                // params num consistency checking
+                MyError error = new MyError("d", unaryExp.ident.getLineNumber());
+                ErrorHandler.addNewError(error);
+            }
+            if(unaryExp.funcRParams != null) {
+                // params num consistency checking
+                if(funcIdent.getFuncParams().size() != unaryExp.funcRParams.getExpArrayList().size()) {
+                    MyError error = new MyError("d", unaryExp.ident.getLineNumber());
+                    ErrorHandler.addNewError(error);
+                }
+
+                // params dimensions consistency checking
+                ArrayList<Integer> funcFParamsDim = new ArrayList<>();
+                ArrayList<Integer> funcRParamsDim = new ArrayList<>();
+
+                ArrayList<FuncParam> funcParams = funcIdent.getFuncParams();
+                for(FuncParam funcParam : funcParams) {
+                    funcFParamsDim.add(funcParam.getFuncParamDimension());
+                }
+                if(unaryExp.funcRParams != null) {
+                    FuncRParams.funcRParamsErrorHandler(unaryExp.funcRParams);
+                    ArrayList<Exp> expList = unaryExp.funcRParams.getExpArrayList();
+                    for(Exp exp : expList) {
+                        FuncParam funcParam = Exp.getFuncParamFromExp(exp);
+                        if(funcParam != null) {
+                            if(funcParam.getFuncParamName() != null) {
+                                Identifier identifier = ErrorHandler.getIdentifier(funcParam.getFuncParamName());
+                                if(identifier instanceof ValIdent valIdent) {
+                                    funcRParamsDim.add(valIdent.getValDimension() - funcParam.getFuncParamDimension());
+                                }
+                                else if(identifier instanceof FuncIdent funcIdent1) {
+                                    if(Objects.equals(funcIdent1.getFuncType(), "void")) {
+                                        funcRParamsDim.add(-1);
+                                    }
+                                    else {
+                                        funcRParamsDim.add(0);
+                                    }
+
+                                }
+                            }
+                            else {
+                                funcRParamsDim.add(funcParam.getFuncParamDimension());
+                            }
+                        }
+                    }
+                }
+                if(!Objects.equals(funcFParamsDim, funcRParamsDim)) {
+                    MyError error = new MyError("e", unaryExp.ident.getLineNumber());
+                    ErrorHandler.addNewError(error);
+                }
+            }
+        }
+    }
+
+    public static FuncParam getFuncParamFromUnaryExp(UnaryExp unaryExp) {
+        if(unaryExp.primaryExp != null) {
+            return PrimaryExp.getFuncParamFromPrimaryExp(unaryExp.primaryExp);
+        }
+        else if(unaryExp.ident != null) {
+            Identifier ident = ErrorHandler.getIdentifier(unaryExp.ident.getToken());
+            if(ident instanceof FuncIdent) {
+                return new FuncParam(unaryExp.ident.getToken(), 0);
+            }
+            else return null;
+        }
+        else {
+            return getFuncParamFromUnaryExp(unaryExp.unaryExp);
         }
     }
 }

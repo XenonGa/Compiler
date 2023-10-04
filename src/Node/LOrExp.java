@@ -51,4 +51,11 @@ public class LOrExp extends Node {
         }
         return new LOrExp(lAndExp1, sign, lOrExp1);
     }
+
+    public static void lOrExpErrorHandler(LOrExp lOrExp) {
+        LAndExp.lAndExpErrorHandler(lOrExp.lAndExp);
+        if(lOrExp.lOrExp != null) {
+            lOrExpErrorHandler(lOrExp.lOrExp);
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package Node;
 
+import ErrorHandler.ErrorHandler;
 import FileProcess.MyFileWriter;
 import LexicalAnalysis.TokenType;
 import Parse.NodeTypeMap;
@@ -53,7 +54,7 @@ public class CompUnit extends Node{
     }
 
     public static void CompUnitErrorHandler(CompUnit compUnit) {
-        ////////////////////////////////
+        ErrorHandler.pushSymbolTable(false, null);
         for(Decl decl : compUnit.declArrayList) {
             Decl.DeclErrorHandler(decl);
         }

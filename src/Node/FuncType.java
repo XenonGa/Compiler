@@ -19,6 +19,14 @@ public class FuncType extends Node {
         else  this.intTK = TK;
     }
 
+    public Token getTK() {
+        if(this.intTK != null)
+        {
+            return this.intTK;
+        }
+        else return this.voidTK;
+    }
+
     public void writeNode() {
         if(voidTK != null) {
             MyFileWriter.write(voidTK.getWholeToken());

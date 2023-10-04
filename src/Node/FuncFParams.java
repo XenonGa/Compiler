@@ -42,4 +42,10 @@ public class FuncFParams extends Node {
         }
         return new FuncFParams(funcFParams, commas);
     }
+
+    public static void funcFParamsErrorHandler(FuncFParams funcFParams) {
+        for(FuncFParam param : funcFParams.funcFParamArrayList) {
+            FuncFParam.funcFParamErrorHandler(param);
+        }
+    }
 }

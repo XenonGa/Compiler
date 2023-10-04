@@ -26,22 +26,29 @@ public class BlockItem extends Node {
     }
 
     public void writeNode() {
-        if(decl != null) {
+        if (decl != null) {
             decl.writeNode();
-        }
-        else {
+        } else {
             stmt.writeNode();
         }
     }
 
     public static BlockItem makeBlockItem() {
-        if(checkCurrentTokenCategory("CONSTTK") || checkCurrentTokenCategory("INTTK")) {
+        if (checkCurrentTokenCategory("CONSTTK") || checkCurrentTokenCategory("INTTK")) {
             Decl decl = Decl.makeDecl();
             return new BlockItem(decl);
-        }
-        else {
+        } else {
             Stmt stmt = Stmt.makeStmt();
             return new BlockItem(stmt);
+        }
+    }
+
+    public static void blockItemErrorHandler(BlockItem blockItem) {
+        if(blockItem.decl != null) {
+            Decl.DeclErrorHandler(blockItem.decl);
+        }
+        else {
+            Stmt.stmtErrorHandler(blockItem.stmt);
         }
     }
 }

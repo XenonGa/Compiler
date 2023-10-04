@@ -1,9 +1,13 @@
 package Node;
 
+import ErrorHandler.ErrorHandler;
+import ErrorHandler.MyError;
 import FileProcess.MyFileWriter;
+import Identifier.Identifier;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
+import Identifier.*;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -76,5 +80,26 @@ public class VarDef extends Node {
             return new VarDef(identifier, leftBrackets, constExps, rightBrackets, assign1, initVal1);
         }
         return new VarDef(identifier, leftBrackets, constExps, rightBrackets);
+    }
+
+    public static void varDefErrorHandler(VarDef varDef) {
+        if(ErrorHandler.isIdentConflicted(varDef.ident.getToken())) {
+            MyError error = new MyError("b", varDef.ident.getLineNumber());
+            ErrorHandler.addNewError(error);
+            return;
+        }
+        if(!varDef.constExpArrayList.isEmpty()) {
+            for(ConstExp constExp : varDef.constExpArrayList) {
+                ConstExp.constExpErrorHandler(constExp);
+            }
+        }
+
+        String name = varDef.ident.getToken();
+        Identifier ident = new ValIdent(name, false, varDef.constExpArrayList.size());
+        ErrorHandler.addInSymbolTable(name, ident);
+
+        if(varDef.initVal != null) {
+            InitVal.initValErrorHandler(varDef.initVal);
+        }
     }
 }

@@ -1,9 +1,11 @@
 package Node;
 
+import ErrorHandler.ErrorHandler;
 import FileProcess.MyFileWriter;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
+import ErrorHandler.*;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -42,5 +44,22 @@ public class Block extends Node{
         }
         Token rightBrace1 = Parser.checkCategory("RBRACE");
         return new Block(leftBrace1, blockItems, rightBrace1);
+    }
+
+    public static void blockErrorHandler(Block block) {
+        for(BlockItem item : block.blockItemArrayList) {
+            BlockItem.blockItemErrorHandler(item);
+        }
+        if(ErrorHandler.symbolTableStack.get(ErrorHandler.symbolTableStack.size() - 1).isFunction()) {
+            if(Objects.equals(ErrorHandler.symbolTableStack.get(ErrorHandler.symbolTableStack.size() - 1).getFunctionType(), "int")) {
+                if(block.blockItemArrayList.isEmpty() ||
+                    block.blockItemArrayList.get(block.blockItemArrayList.size() - 1).getStmt() == null ||
+                    block.blockItemArrayList.get(block.blockItemArrayList.size() - 1).getStmt().getReturnTK() == null ||
+                    block.blockItemArrayList.get(block.blockItemArrayList.size() - 1).getStmt().getExp() == null) {
+                    MyError myError = new MyError("g", block.rightBrace.getLineNumber());
+                    ErrorHandler.addNewError(myError);
+                }
+            }
+        }
     }
 }

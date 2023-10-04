@@ -20,4 +20,8 @@ public class MyError {
     public String writeError() {
         return error_line_num + " " + error_type + "\n";
     }
+
+    public boolean isSameLine(int lineNum) {
+        return lineNum == error_line_num;
+    }
 }

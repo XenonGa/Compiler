@@ -42,4 +42,10 @@ public class FuncRParams extends Node{
         }
         return new FuncRParams(exps, commas);
     }
+
+    public static void funcRParamsErrorHandler(FuncRParams funcRParams) {
+        for(Exp exp : funcRParams.expArrayList) {
+            Exp.expErrorHandler(exp);
+        }
+    }
 }

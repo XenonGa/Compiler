@@ -1,6 +1,7 @@
 package Node;
 
 import FileProcess.MyFileWriter;
+import Identifier.FuncParam;
 import Parse.NodeTypeMap;
 
 // 表达式 Exp → AddExp
@@ -23,5 +24,13 @@ public class Exp extends Node {
     public static Exp makeExp() {
         AddExp addExp1 = AddExp.makeAddExp();
         return new Exp(addExp1);
+    }
+
+    public static void expErrorHandler(Exp exp) {
+        AddExp.addExpErrorHandler(exp.addExp);
+    }
+
+    public static FuncParam getFuncParamFromExp(Exp exp) {
+        return AddExp.getFuncParamFromAddExp(exp.addExp);
     }
 }

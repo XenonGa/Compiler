@@ -38,4 +38,9 @@ public class ForStmt extends Node{
         Exp exp = Exp.makeExp();
         return new ForStmt(lVal, assign, exp);
     }
+
+    public static void forStmtErrorHandler(ForStmt forStmt) {
+        LVal.lValErrorHandler(forStmt.lVal);
+        Exp.expErrorHandler(forStmt.exp);
+    }
 }

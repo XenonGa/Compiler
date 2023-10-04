@@ -1,9 +1,13 @@
 package Node;
 
+import ErrorHandler.ErrorHandler;
 import FileProcess.MyFileWriter;
+import Identifier.*;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
+
+import java.util.ArrayList;
 
 public class MainFuncDef extends Node{
     private Token intTK;
@@ -43,6 +47,12 @@ public class MainFuncDef extends Node{
     }
 
     public static void mainFuncDefErrorHandler(MainFuncDef mainFuncDef) {
-
+        String name = "main";
+        String type = "int";
+        Identifier ident = new FuncIdent(name, type, new ArrayList<>());
+        ErrorHandler.addInSymbolTable(name, ident);
+        ErrorHandler.pushSymbolTable(true, type);
+        Block.blockErrorHandler(mainFuncDef.block);
+        ErrorHandler.popSymbolTable();
     }
 }

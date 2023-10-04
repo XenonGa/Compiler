@@ -49,6 +49,8 @@ public class VarDecl extends Node {
     }
 
     public static void varDeclErrorHandler(VarDecl varDecl) {
-
+        for(VarDef varDef : varDecl.varDefArrayList) {
+            VarDef.varDefErrorHandler(varDef);
+        }
     }
 }

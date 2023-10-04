@@ -1,10 +1,15 @@
 package Node;
 
+import ErrorHandler.*;
 import FileProcess.MyFileWriter;
+import Identifier.FuncIdent;
+import Identifier.FuncParam;
+import Identifier.Identifier;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 // 函数定义 FuncDef → FuncType Ident '(' [FuncFParams] ')' Block
@@ -65,6 +70,34 @@ public class FuncDef extends Node{
     }
 
     public static void funcDefErrorHandler(FuncDef funcDef) {
-
+        if(ErrorHandler.isIdentConflicted(funcDef.ident.getToken())) {
+            MyError error = new MyError("b", funcDef.ident.getLineNumber());
+            ErrorHandler.addNewError(error);
+            return;
+        }
+        if(funcDef.funcFParams == null) {
+            String name = funcDef.ident.getToken();
+            Identifier funcIdent = new FuncIdent(name, funcDef.funcType.getTK().getToken(), new ArrayList<>());
+            ErrorHandler.addInSymbolTable(name, funcIdent);
+        }
+        else {
+            String name = funcDef.ident.getToken();
+            String type = funcDef.funcType.getTK().getToken();
+            ArrayList<FuncParam> paramList = new ArrayList<>();
+            for(FuncFParam funcFParam : funcDef.funcFParams.getFuncFParamArrayList()) {
+                String paramName = funcFParam.getIdent().getToken();
+                int paramDimension = funcFParam.getLeftBracketArrayList().size();
+                FuncParam param = new FuncParam(paramName, paramDimension);
+                paramList.add(param);
+            }
+            Identifier ident = new FuncIdent(name, type, paramList);
+            ErrorHandler.addInSymbolTable(name, ident);
+        }
+        ErrorHandler.pushSymbolTable(true, funcDef.funcType.getTK().getToken());
+        if(funcDef.funcFParams != null) {
+            FuncFParams.funcFParamsErrorHandler(funcDef.funcFParams);
+        }
+        Block.blockErrorHandler(funcDef.block);
+        ErrorHandler.popSymbolTable();
     }
 }

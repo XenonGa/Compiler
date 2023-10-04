@@ -1,6 +1,7 @@
 package Node;
 
 import FileProcess.MyFileWriter;
+import Identifier.FuncParam;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
@@ -70,6 +71,27 @@ public class PrimaryExp extends Node {
         else {
             LVal lVal1 = LVal.makeLVal();
             return new PrimaryExp(lVal1);
+        }
+    }
+
+    public static void primaryExpErrorHandler(PrimaryExp primaryExp) {
+        if(primaryExp.exp != null) {
+            Exp.expErrorHandler(primaryExp.exp);
+        }
+        else if(primaryExp.lVal != null) {
+            LVal.lValErrorHandler(primaryExp.lVal);
+        }
+    }
+
+    public static FuncParam getFuncParamFromPrimaryExp(PrimaryExp primaryExp) {
+        if(primaryExp.exp != null) {
+            return Exp.getFuncParamFromExp(primaryExp.exp);
+        }
+        else if(primaryExp.lVal != null) {
+            return LVal.getFuncParamFromLVal(primaryExp.lVal);
+        }
+        else {
+            return new FuncParam(null, 0);
         }
     }
 }

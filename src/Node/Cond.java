@@ -24,4 +24,8 @@ public class Cond extends Node {
         LOrExp lOrExp1 = LOrExp.makeLOrExp();
         return new Cond(lOrExp1);
     }
+
+    public static void condErrorHandler(Cond cond) {
+        LOrExp.lOrExpErrorHandler(cond.lOrExp);
+    }
 }
