@@ -368,6 +368,14 @@ public class Stmt extends Node{
     public static void stmtErrorHandler(Stmt stmt) {
         switch (stmt.stmtType) {
             case LVal_Assign_Exp -> {
+                LVal.lValErrorHandler(stmt.lVal);
+                Identifier lValIdent = ErrorHandler.getIdentifier(stmt.lVal.getIdent().getToken());
+                if(lValIdent instanceof ValIdent val) {
+                    if(val.isConstFlag()) {
+                        MyError error = new MyError("h", stmt.lVal.getIdent().getLineNumber());
+                        ErrorHandler.addNewError(error);
+                    }
+                }
                 Exp.expErrorHandler(stmt.exp);
             }
             case Exp -> {
@@ -400,7 +408,10 @@ public class Stmt extends Node{
                 ErrorHandler.forFlag -= 1;
             }
             case Break -> {
-
+                if(ErrorHandler.forFlag == 0) {
+                    MyError error = new MyError("m", stmt.breakTK.getLineNumber());
+                    ErrorHandler.addNewError(error);
+                }
             }
             case Continue -> {
                 if(ErrorHandler.forFlag == 0) {

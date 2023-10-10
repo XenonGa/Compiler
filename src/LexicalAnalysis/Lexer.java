@@ -1,5 +1,7 @@
 package LexicalAnalysis;
 
+import ErrorHandler.*;
+import ErrorHandler.MyError;
 import FileProcess.MyFileReader;
 import FileProcess.MyFileWriter;
 
@@ -58,6 +60,32 @@ public class Lexer {
                 }
                 while (character != '"') {
                     stringConcatenate(character);
+                    if(character == 33 || character == 32) {
+                        getSingleChar();
+                        continue;
+                    }
+                    if(character >= 40 && character <= 126) {
+                        if(character == '\\') {
+                            getSingleChar();
+                            if(character != 'n') {
+                                MyError myError = new MyError("a", lineNumber);
+                                ErrorHandler.addNewError(myError);
+                            }
+                            continue;
+                        }
+                    }
+                    else if (character == '%') {
+                        getSingleChar();
+                        if(character != 'd') {
+                            MyError myError = new MyError("a", lineNumber);
+                            ErrorHandler.addNewError(myError);
+                        }
+                        continue;
+                    }
+                    else {
+                        MyError myError = new MyError("a", lineNumber);
+                        ErrorHandler.addNewError(myError);
+                    }
                     getSingleChar();
                 }
                 stringConcatenate(character);

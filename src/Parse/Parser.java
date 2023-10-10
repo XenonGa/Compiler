@@ -37,13 +37,13 @@ public class Parser {
             addError("i");
             return new Token("SEMICN", ";", tokenArrayList.get(index - 1).getLineNumber());
         }
-        else if(Objects.equals(category, "RBRACK")) {
-            addError("j");
-            return new Token("RBRACK", "]", tokenArrayList.get(index - 1).getLineNumber());
-        }
         else if(Objects.equals(category, "RPARENT")) {
-            addError("k");
+            addError("j");
             return new Token("RPARENT", ")", tokenArrayList.get(index - 1).getLineNumber());
+        }
+        else if(Objects.equals(category, "RBRACK")) {
+            addError("k");
+            return new Token("RBRACK", "]", tokenArrayList.get(index - 1).getLineNumber());
         }
         else return null;
     }

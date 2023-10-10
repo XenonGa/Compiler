@@ -3,6 +3,8 @@ package ErrorHandler;
 import FileProcess.MyFileWriter;
 import Identifier.Identifier;
 import Identifier.SymbolTable;
+import Node.CompUnit;
+import Parse.Parser;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -17,6 +19,9 @@ public class ErrorHandler {
         return errorArrayList;
     }
 
+    public ErrorHandler(CompUnit compUnit) {
+        CompUnit.CompUnitErrorHandler(compUnit);
+    }
     public static void addNewError(MyError error) {
         for (MyError value : errorArrayList) {
             if (value.isSameLine(error.getError_line_num())) return;
