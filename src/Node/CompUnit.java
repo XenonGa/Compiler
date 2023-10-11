@@ -2,11 +2,16 @@ package Node;
 
 import ErrorHandler.ErrorHandler;
 import FileProcess.MyFileWriter;
-import LexicalAnalysis.TokenType;
+import LLVM_IR.Builder;
+import LLVM_IR.LLVMType.*;
+import LLVM_IR.Structure.Function;
+import LLVM_IR.SymbolTable;
 import Parse.NodeTypeMap;
 import Parse.Parser;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Locale;
 import java.util.Objects;
 
 // 编译单元 CompUnit → {Decl} {FuncDef} MainFuncDef
@@ -53,7 +58,7 @@ public class CompUnit extends Node{
         return new CompUnit(decls, funcDefs, mainFuncDef1);
     }
 
-    public static void CompUnitErrorHandler(CompUnit compUnit) {
+    public static void compUnitErrorHandler(CompUnit compUnit) {
         ErrorHandler.pushSymbolTable(false, null);
         for(Decl decl : compUnit.declArrayList) {
             Decl.DeclErrorHandler(decl);
@@ -62,5 +67,21 @@ public class CompUnit extends Node{
             FuncDef.funcDefErrorHandler(funcDef);
         }
         MainFuncDef.mainFuncDefErrorHandler(compUnit.mainFuncDef);
+    }
+
+    public static void compUnitBuildLLVM(CompUnit compUnit) {
+        SymbolTable.pushLLVMSymbolTable();
+        ArrayList<Type> params1 = new ArrayList<>();
+        SymbolTable.addValSymbol("getint", Function.createLibFunction("getint", Builder.i32, params1));
+        ArrayList<Type> params2 = new ArrayList<>();
+        params2.add(Builder.i32);
+        SymbolTable.addValSymbol("putint", Function.createLibFunction("putint", Builder.typeVoid, params2));
+        ArrayList<Type> params3 = new ArrayList<>();
+        params3.add(Builder.i32);
+        SymbolTable.addValSymbol("putch", Function.createLibFunction("putch", Builder.typeVoid, params3));
+        ArrayList<Type> params4 = new ArrayList<>();
+        Type pointerType = new TypePointer(Builder.i8);
+        params4.add(pointerType);
+        SymbolTable.addValSymbol("putstr", Function.createLibFunction("putstr", Builder.typeVoid, params4));
     }
 }

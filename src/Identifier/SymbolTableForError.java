@@ -1,14 +1,13 @@
 package Identifier;
 
-import java.util.HashMap;
 import java.util.Map;
 
-public class SymbolTable {
+public class SymbolTableForError {
     private Map<String, Identifier> symbols;
     private boolean isFunction;
     private String functionType;
 
-    public SymbolTable(Map<String, Identifier> symbols, boolean isFunction, String functionType) {
+    public SymbolTableForError(Map<String, Identifier> symbols, boolean isFunction, String functionType) {
         this.symbols = symbols;
         this.isFunction = isFunction;
         this.functionType = functionType;

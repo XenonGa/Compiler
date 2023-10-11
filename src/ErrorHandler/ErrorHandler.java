@@ -2,9 +2,8 @@ package ErrorHandler;
 
 import FileProcess.MyFileWriter;
 import Identifier.Identifier;
-import Identifier.SymbolTable;
+import Identifier.SymbolTableForError;
 import Node.CompUnit;
-import Parse.Parser;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -12,7 +11,7 @@ import java.util.HashMap;
 
 public class ErrorHandler {
     public static ArrayList<MyError> errorArrayList = new ArrayList<>();
-    public static ArrayList<SymbolTable> symbolTableStack = new ArrayList<>();
+    public static ArrayList<SymbolTableForError> symbolTableForErrorStack = new ArrayList<>();
     public static int forFlag = 0;
 
     public static ArrayList<MyError> getErrorArrayList() {
@@ -20,7 +19,7 @@ public class ErrorHandler {
     }
 
     public ErrorHandler(CompUnit compUnit) {
-        CompUnit.CompUnitErrorHandler(compUnit);
+        CompUnit.compUnitErrorHandler(compUnit);
     }
     public static void addNewError(MyError error) {
         for (MyError value : errorArrayList) {
@@ -37,46 +36,46 @@ public class ErrorHandler {
 
     public static void pushSymbolTable(boolean isFunction, String functionType) {
         HashMap<String, Identifier> symbolTable = new HashMap<>();
-        SymbolTable table = new SymbolTable(symbolTable, isFunction, functionType);
-        symbolTableStack.add(table);
+        SymbolTableForError table = new SymbolTableForError(symbolTable, isFunction, functionType);
+        symbolTableForErrorStack.add(table);
     }
 
     public static void popSymbolTable() {
-        symbolTableStack.remove(symbolTableStack.size() - 1);
+        symbolTableForErrorStack.remove(symbolTableForErrorStack.size() - 1);
     }
 
     public static boolean isIdentConflicted(String name) {
-        return symbolTableStack.get(symbolTableStack.size() - 1).getSymbols().containsKey(name);
+        return symbolTableForErrorStack.get(symbolTableForErrorStack.size() - 1).getSymbols().containsKey(name);
     }
 
     public static boolean isDeclared(String name) {
-        for(int i = symbolTableStack.size() - 1; i >= 0; i--) {
-            if(symbolTableStack.get(i).getSymbols().containsKey(name)) return true;
+        for(int i = symbolTableForErrorStack.size() - 1; i >= 0; i--) {
+            if(symbolTableForErrorStack.get(i).getSymbols().containsKey(name)) return true;
         }
         return false;
     }
 
     public static void addInSymbolTable(String name, Identifier identifier) {
-        symbolTableStack.get(symbolTableStack.size() - 1).getSymbols().put(name, identifier);
+        symbolTableForErrorStack.get(symbolTableForErrorStack.size() - 1).getSymbols().put(name, identifier);
     }
 
     public static Identifier getIdentifier(String name) {
-        for (int i = symbolTableStack.size() - 1; i >= 0; i--) {
-            if(symbolTableStack.get(i).getSymbols().containsKey(name)) return symbolTableStack.get(i).getSymbols().get(name);
+        for (int i = symbolTableForErrorStack.size() - 1; i >= 0; i--) {
+            if(symbolTableForErrorStack.get(i).getSymbols().containsKey(name)) return symbolTableForErrorStack.get(i).getSymbols().get(name);
         }
         return null;
     }
 
     public static boolean isInFunction() {
-        for(int i = symbolTableStack.size() - 1; i >= 0; i--) {
-            if(symbolTableStack.get(i).isFunction()) return true;
+        for(int i = symbolTableForErrorStack.size() - 1; i >= 0; i--) {
+            if(symbolTableForErrorStack.get(i).isFunction()) return true;
         }
         return false;
     }
 
     public static String getFunctionType() {
-        for(int i = symbolTableStack.size() - 1; i >= 0; i--) {
-            if(symbolTableStack.get(i).isFunction()) return symbolTableStack.get(i).getFunctionType();
+        for(int i = symbolTableForErrorStack.size() - 1; i >= 0; i--) {
+            if(symbolTableForErrorStack.get(i).isFunction()) return symbolTableForErrorStack.get(i).getFunctionType();
         }
         return null;
     }

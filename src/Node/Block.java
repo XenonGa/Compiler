@@ -50,8 +50,8 @@ public class Block extends Node{
         for(BlockItem item : block.blockItemArrayList) {
             BlockItem.blockItemErrorHandler(item);
         }
-        if(ErrorHandler.symbolTableStack.get(ErrorHandler.symbolTableStack.size() - 1).isFunction()) {
-            if(Objects.equals(ErrorHandler.symbolTableStack.get(ErrorHandler.symbolTableStack.size() - 1).getFunctionType(), "int")) {
+        if(ErrorHandler.symbolTableForErrorStack.get(ErrorHandler.symbolTableForErrorStack.size() - 1).isFunction()) {
+            if(Objects.equals(ErrorHandler.symbolTableForErrorStack.get(ErrorHandler.symbolTableForErrorStack.size() - 1).getFunctionType(), "int")) {
                 if(block.blockItemArrayList.isEmpty() ||
                     block.blockItemArrayList.get(block.blockItemArrayList.size() - 1).getStmt() == null ||
                     block.blockItemArrayList.get(block.blockItemArrayList.size() - 1).getStmt().getReturnTK() == null ||
