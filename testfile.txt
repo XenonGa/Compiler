@@ -1,27 +1,11 @@
-void fuck() {
-    return ;
+void fuck(int a) {
+    return;
 }
-void fuckyou() {
-return
-}
-void fuckyou() {
- return 34;
-}
-void fuckfuckf() {
 
-}
-int fuck1() {
-    return 1;
-}
-int fuck14() {
-    return ;
-}
-int fuck21() {
-    return
-}
-int fuck2r1() {
 
-}
 int main() {
-return ;
+       int a = 0;
+       a = fuck(fuck(a));
+
+    return 0;
 }

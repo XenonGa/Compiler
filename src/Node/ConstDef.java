@@ -9,8 +9,8 @@ import Parse.Parser;
 import ErrorHandler.MyError;
 import Identifier.ValIdent;
 
+import javax.print.DocFlavor;
 import java.util.ArrayList;
-import java.util.Objects;
 
 // 常数定义 ConstDef → Ident { '[' ConstExp ']' } '=' ConstInitVal
 public class ConstDef extends Node {
@@ -70,7 +70,7 @@ public class ConstDef extends Node {
         return new ConstDef(identifier, leftBrackets, constExps, rightBrackets, assign1, constInitVal1);
     }
 
-    public static void ConstDefErrorHandler(ConstDef constDef) {
+    public static void constDefErrorHandler(ConstDef constDef) {
         if(ErrorHandler.isIdentConflicted(constDef.ident.getToken())) {
             MyError error = new MyError("b", constDef.ident.getLineNumber());
             ErrorHandler.addNewError(error);
@@ -87,5 +87,10 @@ public class ConstDef extends Node {
         ErrorHandler.addInSymbolTable(name, ident);
 
         ConstInitVal.constInitValErrorHandler(constDef.constInitVal);
+    }
+
+    public static void constDefLLVMBuilder(ConstDef constDef) {
+        String ident = constDef.ident.getToken();
+
     }
 }

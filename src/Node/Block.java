@@ -62,4 +62,8 @@ public class Block extends Node{
             }
         }
     }
+
+    public static void blockLLVMBuilder(Block block) {
+
+    }
 }

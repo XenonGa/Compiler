@@ -100,4 +100,8 @@ public class FuncDef extends Node{
         Block.blockErrorHandler(funcDef.block);
         ErrorHandler.popSymbolTable();
     }
+
+    public static void funcDefLLVMBuilder(FuncDef funcDef) {
+
+    }
 }

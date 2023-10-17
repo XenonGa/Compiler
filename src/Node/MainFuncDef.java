@@ -3,9 +3,14 @@ package Node;
 import ErrorHandler.ErrorHandler;
 import FileProcess.MyFileWriter;
 import Identifier.*;
+import LLVM_IR.BuilderAttribute;
+import LLVM_IR.Structure.BasicBlock;
+import LLVM_IR.SymbolTable;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
+import LLVM_IR.Structure.Function;
+import LLVM_IR.LLVMType.*;
 
 import java.util.ArrayList;
 
@@ -54,5 +59,22 @@ public class MainFuncDef extends Node{
         ErrorHandler.pushSymbolTable(true, type);
         Block.blockErrorHandler(mainFuncDef.block);
         ErrorHandler.popSymbolTable();
+    }
+
+    public static void mainFuncDefLLVMBuilder(MainFuncDef mainFuncDef) {
+        ArrayList<Type> mainParamsType = new ArrayList<>();
+        BuilderAttribute.curentFunction = Function.createFunction("main", BuilderAttribute.i32, mainParamsType);
+        BuilderAttribute.isAtGlobal = false;
+
+        SymbolTable.addValSymbol("main", BuilderAttribute.curentFunction);
+        SymbolTable.pushLLVMSymbolTable();
+        SymbolTable.addValSymbol("main", BuilderAttribute.curentFunction);
+
+        BuilderAttribute.currentBlock = new BasicBlock();
+        // funcArgs
+        Block.blockLLVMBuilder(mainFuncDef.block);
+        SymbolTable.popLLVMSymbolTable();
+        BuilderAttribute.isAtGlobal = false;
+
     }
 }

@@ -53,4 +53,8 @@ public class VarDecl extends Node {
             VarDef.varDefErrorHandler(varDef);
         }
     }
+
+    public static void varDeclLLVMBuilder(VarDecl varDecl) {
+
+    }
 }

@@ -49,4 +49,13 @@ public class Decl extends Node {
             VarDecl.varDeclErrorHandler(decl.varDecl);
         }
     }
+
+    public static void declLLVMBuilder(Decl decl) {
+        if(decl.constDecl != null) {
+            ConstDecl.constDeclLLVMBuilder(decl.constDecl);
+        }
+        else {
+            VarDecl.varDeclLLVMBuilder(decl.varDecl);
+        }
+    }
 }

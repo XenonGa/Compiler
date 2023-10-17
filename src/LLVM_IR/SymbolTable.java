@@ -37,6 +37,10 @@ public class SymbolTable {
         LLVMSymbolTableStack.get(LLVMSymbolTableStack.size() - 1).valSymbolTable.put(ident, value);
     }
 
+    public static void addGlobalValSymbol(String ident, Value value) {
+        LLVMSymbolTableStack.get(0).valSymbolTable.put(ident, value);
+    }
+
     public static Value getValSymbol(String ident) {
         for(int i = LLVMSymbolTableStack.size() - 1; i >= 0; i--) {
             if(LLVMSymbolTableStack.get(i).valSymbolTable.containsKey(ident)) {

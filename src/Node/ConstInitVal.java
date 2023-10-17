@@ -85,4 +85,8 @@ public class ConstInitVal extends Node {
             constInitValErrorHandler(constInitVal1);
         }
     }
+
+    public static void constInitValLLVMBuilder(ConstInitVal constInitVal) {
+
+    }
 }

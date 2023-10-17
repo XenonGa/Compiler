@@ -1,12 +1,12 @@
 package Node;
 
 import FileProcess.MyFileWriter;
+import LLVM_IR.BuilderAttribute;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 // 常量声明 ConstDecl → 'const' BType ConstDef { ',' ConstDef } ';'
 public class ConstDecl extends Node {
@@ -62,7 +62,14 @@ public class ConstDecl extends Node {
 
     public static void constDeclErrorHandler(ConstDecl constDecl) {
         for(ConstDef constDef : constDecl.constDefArrayList) {
-            ConstDef.ConstDefErrorHandler(constDef);
+            ConstDef.constDefErrorHandler(constDef);
+        }
+    }
+
+    public static void constDeclLLVMBuilder(ConstDecl constDecl) {
+        BuilderAttribute.curType = BuilderAttribute.i32;
+        for(ConstDef constDef : constDecl.constDefArrayList) {
+            ConstDef.constDefErrorHandler(constDef);
         }
     }
 }
