@@ -51,4 +51,14 @@ public class BlockItem extends Node {
             Stmt.stmtErrorHandler(blockItem.stmt);
         }
     }
+
+    // TODO BlockItem → Decl | Stmt
+    public static void blockItemLLVMBuilder(BlockItem blockItem) {
+        if(blockItem.decl != null) {
+            Decl.declLLVMBuilder(blockItem.decl);
+        }
+        else {
+            Stmt.stmtLLVMBuilder(blockItem.stmt);
+        }
+    }
 }

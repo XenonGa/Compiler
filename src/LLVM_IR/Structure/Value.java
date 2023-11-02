@@ -5,14 +5,14 @@ import LLVM_IR.LLVMType.Type;
 import java.util.ArrayList;
 
 public class Value {
-    private String value;
+    private String valueName;
     private Type type;
-    private static int idNum = 0;
+    public static int idNum = 0;
     private String id;
     private ArrayList<Use> uses;
 
-    public Value(String value, Type type) {
-        this.value = value;
+    public Value(String valueName, Type type) {
+        this.valueName = valueName;
         this.type = type;
         this.id = "unique" + idNum++;
         this.uses = new ArrayList<>();
@@ -20,6 +20,14 @@ public class Value {
 
     public Type getType() {
         return type;
+    }
+
+    public String getValueName() {
+        return valueName;
+    }
+
+    public String toString() {
+        return this.type.toString() + " " + this.valueName;
     }
 
     public void addUse(Use use) {

@@ -71,4 +71,8 @@ public class LVal extends Node {
     public static FuncParam getFuncParamFromLVal(LVal lVal) {
         return new FuncParam(lVal.ident.getToken(), lVal.expArrayList.size());
     }
+
+    public static void lValLLVMBuilder(LVal lVal) {
+
+    }
 }

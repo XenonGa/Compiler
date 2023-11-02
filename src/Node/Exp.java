@@ -2,6 +2,7 @@ package Node;
 
 import FileProcess.MyFileWriter;
 import Identifier.FuncParam;
+import LLVM_IR.BuilderAttribute;
 import Parse.NodeTypeMap;
 
 // 表达式 Exp → AddExp
@@ -32,5 +33,11 @@ public class Exp extends Node {
 
     public static FuncParam getFuncParamFromExp(Exp exp) {
         return AddExp.getFuncParamFromAddExp(exp.addExp);
+    }
+
+    public static void expLLVMBuilder(Exp exp) {
+        BuilderAttribute.curTempValue = null;
+        BuilderAttribute.curSaveValue = null;
+        AddExp.AddExpLLVMBuilder(exp.addExp);
     }
 }

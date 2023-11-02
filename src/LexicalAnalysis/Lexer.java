@@ -23,14 +23,14 @@ public class Lexer {
         this.lineAnnotation = false;
         this.blockAnnotation = false;
         runLexer();
-        // tokenList.forEach(Token::writeIntoFile);
+//         tokenList.forEach(Token::writeIntoFile);
     }
 
     public void runLexer() throws IOException {
         getSingleChar();
         while (character != (char) -1) {
             clearToken();
-            if(Character.isSpaceChar(character)){
+            if(Character.isSpaceChar(character) || character == '\r'){
                 getSingleChar();
             }
             else if(isAlpha(character) || character == '_') {

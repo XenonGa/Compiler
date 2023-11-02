@@ -94,4 +94,17 @@ public class PrimaryExp extends Node {
             return new FuncParam(null, 0);
         }
     }
+
+    // TODO PrimaryExp → '(' Exp ')' | LVal | Number
+    public static void primaryExpLLVMBuilder(PrimaryExp primaryExp) {
+        if(primaryExp.exp != null) {
+            Exp.expLLVMBuilder(primaryExp.exp);
+        }
+        else if(primaryExp.lVal != null) {
+            LVal.lValLLVMBuilder(primaryExp.lVal);
+        }
+        else if(primaryExp.numberNode != null) {
+            NumberNode.numberNodeLLVMBuilder(primaryExp.numberNode);
+        }
+    }
 }

@@ -28,7 +28,7 @@ public class TypeArray extends Type {
     }
 
     public boolean isString() {
-        if(type instanceof TypeSpace space) {
+        if(type instanceof TypeInt space) {
             return space.getSpace() == 8;
         }
         return false;

@@ -1,6 +1,8 @@
 package Node;
 
 import FileProcess.MyFileWriter;
+import LLVM_IR.BuilderAttribute;
+import LLVM_IR.Structure.ConstNum;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
@@ -25,5 +27,14 @@ public class NumberNode extends Node {
     public static NumberNode makeNumberNode() {
         Token intConst = Parser.checkCategory("INTCON");
         return new NumberNode(intConst);
+    }
+
+    public static void numberNodeLLVMBuilder(NumberNode numberNode) {
+        if(BuilderAttribute.isConstant) {
+            BuilderAttribute.curSaveValue = Integer.parseInt(numberNode.intConst.getToken());
+        }
+        else {
+            BuilderAttribute.curTempValue = new ConstNum(Integer.parseInt(numberNode.intConst.getToken()));
+        }
     }
 }

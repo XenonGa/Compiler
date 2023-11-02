@@ -3,6 +3,9 @@ package Node;
 import ErrorHandler.*;
 import FileProcess.MyFileWriter;
 import Identifier.*;
+import LLVM_IR.BuilderAttribute;
+import LLVM_IR.Instruction.Instruction_Br;
+import LLVM_IR.Instruction.Instruction_Ret;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
@@ -249,7 +252,39 @@ public class Stmt extends Node{
     }
 
     public static Stmt makeStmt() {
-        if(checkCurrentTokenCategory("LBRACE")) {
+        if(checkCurrentTokenCategory("IDENFR")) {
+            int assignNum = Parser.index;
+            for(int i  = Parser.index; i < Parser.tokenArrayList.size() &&
+                    Parser.tokenArrayList.get(i).getLineNumber() ==
+                            Parser.currentToken.getLineNumber(); i++) {
+                if(Objects.equals(Parser.tokenArrayList.get(i).getCategory(), "ASSIGN")) {
+                    assignNum = i;
+                }
+            }
+            if(assignNum > Parser.index) {
+                // LVal
+                LVal lVal = LVal.makeLVal();
+                Token assign = Parser.checkCategory("ASSIGN");
+                if (!checkCurrentTokenCategory("GETINTTK")) {
+                    // LVal '=' Exp ';'
+                    Exp exp = Exp.makeExp();
+                    Token semicolon = Parser.checkCategory("SEMICN");
+                    return new Stmt(StmtType.LVal_Assign_Exp, lVal, assign, exp, semicolon);
+                } else {
+                    Token getInt = Parser.checkCategory("GETINTTK");
+                    Token leftParent = Parser.checkCategory("LPARENT");
+                    Token rightParent = Parser.checkCategory("RPARENT");
+                    Token semicolon = Parser.checkCategory("SEMICN");
+                    return new Stmt(StmtType.LVal_Assign_Getint, lVal, assign, semicolon, leftParent, rightParent, getInt);
+                }
+            }
+            else {
+                Exp exp = Exp.makeExp();;
+                Token semicolon = Parser.checkCategory("SEMICN");
+                return new Stmt(StmtType.Exp, exp, semicolon);
+            }
+        }
+        else if(checkCurrentTokenCategory("LBRACE")) {
             // Block
             Block block = Block.makeBlock();
             return new Stmt(StmtType.Block, block);
@@ -327,33 +362,6 @@ public class Stmt extends Node{
             return new Stmt(StmtType.Printf, semicolon, leftParent, rightParent, printfTK, formatString, commas, exps);
         }
         else {
-            int assignNum = Parser.index;
-            for(int i  = Parser.index; i < Parser.tokenArrayList.size() &&
-                    Parser.tokenArrayList.get(i).getLineNumber() ==
-                    Parser.currentToken.getLineNumber(); i++) {
-                if(Objects.equals(Parser.tokenArrayList.get(i).getCategory(), "ASSIGN")) {
-                    assignNum = i;
-                }
-            }
-            if(assignNum != Parser.index) {
-                // LVal
-                LVal lVal = LVal.makeLVal();
-                Token assign = Parser.checkCategory("ASSIGN");
-                if(!checkCurrentTokenCategory("GETINTTK")) {
-                    // LVal '=' Exp ';'
-                    Exp exp = Exp.makeExp();
-                    Token semicolon = Parser.checkCategory("SEMICN");
-                    return new Stmt(StmtType.LVal_Assign_Exp, lVal, assign, exp, semicolon);
-                }
-                else {
-                    Token getInt = Parser.checkCategory("GETINTTK");
-                    Token leftParent = Parser.checkCategory("LPARENT");
-                    Token rightParent = Parser.checkCategory("RPARENT");
-                    Token semicolon = Parser.checkCategory("SEMICN");
-                    return new Stmt(StmtType.LVal_Assign_Getint, lVal, assign, semicolon, leftParent, rightParent, getInt);
-                }
-            }
-            else {
                 // [Exp] ';'
                 Exp exp = null;
                 if(!checkCurrentTokenCategory("SEMICN")) {
@@ -361,7 +369,6 @@ public class Stmt extends Node{
                 }
                 Token semicolon = Parser.checkCategory("SEMICN");
                 return new Stmt(StmtType.Exp, exp, semicolon);
-            }
         }
     }
 
@@ -460,5 +467,19 @@ public class Stmt extends Node{
                 }
             }
         }
+    }
+
+    public static void stmtLLVMBuilder(Stmt stmt) {
+            switch (stmt.stmtType) {
+                case Return -> {
+                    if(stmt.exp != null) {
+                        Exp.expLLVMBuilder(stmt.exp);
+                        Instruction_Ret.makeReturnInst(BuilderAttribute.currentBlock, BuilderAttribute.curTempValue);
+                    }
+                    else {
+                        Instruction_Ret.makeReturnInst(BuilderAttribute.currentBlock);
+                    }
+                }
+            }
     }
 }

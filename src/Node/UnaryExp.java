@@ -3,6 +3,7 @@ package Node;
 import ErrorHandler.*;
 import FileProcess.MyFileWriter;
 import Identifier.*;
+import LLVM_IR.BuilderAttribute;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
@@ -196,6 +197,35 @@ public class UnaryExp extends Node{
         }
         else {
             return getFuncParamFromUnaryExp(unaryExp.unaryExp);
+        }
+    }
+
+    // TODO UnaryExp → PrimaryExp | Ident '(' [FuncRParams] ')' | UnaryOp UnaryExp
+    public static void unaryExpLLVMBuilder(UnaryExp unaryExp) {
+        if(unaryExp.primaryExp != null) {
+            PrimaryExp.primaryExpLLVMBuilder(unaryExp.primaryExp);
+        }
+        else if(unaryExp.ident != null) {
+            // TODO ident
+        }
+        else if(unaryExp.unaryOp != null) {
+            String operator = unaryExp.unaryOp.getSign().getCategory();
+            if(operator.equals("PLUS")) {
+                unaryExpLLVMBuilder(unaryExp.unaryExp);
+            }
+            else if(operator.equals("MINU")) {
+                unaryExpLLVMBuilder(unaryExp.unaryExp);
+                if(BuilderAttribute.isConstant) {
+                    BuilderAttribute.curSaveValue = -1 * BuilderAttribute.curSaveValue;
+                }
+                else {
+                    // TODO build binary
+                }
+            }
+            else if(operator.equals("NOT")) {
+                unaryExpLLVMBuilder(unaryExp.unaryExp);
+                // TODO build not
+            }
         }
     }
 }

@@ -69,7 +69,7 @@ public class ConstDecl extends Node {
     public static void constDeclLLVMBuilder(ConstDecl constDecl) {
         BuilderAttribute.curType = BuilderAttribute.i32;
         for(ConstDef constDef : constDecl.constDefArrayList) {
-            ConstDef.constDefErrorHandler(constDef);
+            ConstDef.constDefLLVMBuilder(constDef);
         }
     }
 }

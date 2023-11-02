@@ -2,33 +2,33 @@ package LLVM_IR.Instruction;
 
 import LLVM_IR.Structure.Value;
 
-public class InstructionLinkList {
-    private InstructionLinkNode firstNode;
-    private InstructionLinkNode lastNode;
-    private Value value;
+public class LinkList<F, S> {
+    private LinkListNode<F, S> firstNode;
+    private LinkListNode<F, S> lastNode;
+    private S value;
     private int length;
-    public InstructionLinkList(Value value) {
+    public LinkList(S value) {
         this.value = value;
         this.length = 0;
     }
 
-    public InstructionLinkNode getFirstNode() {
+    public LinkListNode<F, S> getFirstNode() {
         return firstNode;
     }
 
-    public void setFirstNode(InstructionLinkNode firstNode) {
+    public void setFirstNode(LinkListNode<F, S> firstNode) {
         this.firstNode = firstNode;
     }
 
-    public InstructionLinkNode getLastNode() {
+    public LinkListNode<F, S> getLastNode() {
         return lastNode;
     }
 
-    public void setLastNode(InstructionLinkNode lastNode) {
+    public void setLastNode(LinkListNode<F, S> lastNode) {
         this.lastNode = lastNode;
     }
 
-    public Value getValue() {
+    public S getValue() {
         return value;
     }
 
@@ -45,11 +45,9 @@ public class InstructionLinkList {
     }
 
     public Boolean listIsEmpty() {
-        if(this.firstNode == null && this.length == 0) {
+        if (this.firstNode == null && this.length == 0) {
             return true;
         }
         return false;
     }
-
-
 }

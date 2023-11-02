@@ -2,6 +2,8 @@ package Node;
 
 import FileProcess.MyFileWriter;
 import Identifier.FuncParam;
+import LLVM_IR.BuilderAttribute;
+import LLVM_IR.Structure.Value;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
@@ -65,5 +67,52 @@ public class AddExp extends Node {
 
     public static FuncParam getFuncParamFromAddExp(AddExp addExp) {
         return MulExp.getFuncParamFromMulExp(addExp.mulExp);
+    }
+
+    public static void AddExpLLVMBuilder(AddExp addExp) {
+        if(BuilderAttribute.isConstant) {
+            Integer tempValue = BuilderAttribute.curSaveValue;
+            String operator = BuilderAttribute.curSaveOperator;
+            BuilderAttribute.curSaveOperator = null;
+
+            MulExp.mulExpLLVMBuilder(addExp.mulExp);
+
+            if(tempValue != null) {
+                // TODO calculate
+            }
+
+            if(addExp.addExp != null) {
+                if(addExp.sign.getCategory().equals("PLUS")) {
+                    BuilderAttribute.curSaveOperator = "PLUS";
+                }
+                else {
+                    BuilderAttribute.curSaveOperator = "MINU";
+                }
+                AddExpLLVMBuilder(addExp.addExp);
+            }
+
+        }
+        else {
+            Value tempValue = BuilderAttribute.curTempValue;
+            String operator = BuilderAttribute.curTempOperator;
+            BuilderAttribute.curTempValue = null;
+
+            MulExp.mulExpLLVMBuilder(addExp.mulExp);
+
+            if(tempValue != null) {
+                // TODO build binary
+
+            }
+
+            if(addExp.addExp != null) {
+                if(addExp.sign.getCategory().equals("PLUS")) {
+                    BuilderAttribute.curTempOperator = "PLUS";
+                }
+                else {
+                    BuilderAttribute.curTempOperator = "MINU";
+                }
+                AddExpLLVMBuilder(addExp.addExp);
+            }
+        }
     }
 }

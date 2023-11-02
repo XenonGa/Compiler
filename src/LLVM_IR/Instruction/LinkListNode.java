@@ -1,45 +1,45 @@
 package LLVM_IR.Instruction;
 
-public class InstructionLinkNode {
-    private InstructionLinkNode left;
-    private InstructionLinkNode right;
-    private Instruction instruction;
-    private InstructionLinkList parentList;
+public class LinkListNode<F, S> {
+    private LinkListNode<F, S> left;
+    private LinkListNode<F, S> right;
+    private F nodeValue;
+    private LinkList<F, S> parentList;
 
-    public InstructionLinkNode(Instruction inst) {
-        this.instruction = inst;
+    public LinkListNode(F nodeValue) {
+        this.nodeValue = nodeValue;
     }
 
-    public InstructionLinkNode(Instruction instruction, InstructionLinkList parentList) {
-        this.instruction = instruction;
+    public LinkListNode(F nodeValue, LinkList<F, S> parentList) {
+        this.nodeValue = nodeValue;
         this.parentList = parentList;
     }
 
-    public InstructionLinkNode getLeft() {
+    public LinkListNode<F, S> getLeft() {
         return left;
     }
 
-    public void setLeft(InstructionLinkNode left) {
+    public void setLeft(LinkListNode<F, S> left) {
         this.left = left;
     }
 
-    public InstructionLinkNode getRight() {
+    public LinkListNode<F, S> getRight() {
         return right;
     }
 
-    public void setRight(InstructionLinkNode right) {
+    public void setRight(LinkListNode<F, S> right) {
         this.right = right;
     }
 
-    public Instruction getInstruction() {
-        return instruction;
+    public F getNodeValue() {
+        return this.nodeValue;
     }
 
-    public InstructionLinkList getParentList() {
+    public LinkList<F, S> getParentList() {
         return parentList;
     }
 
-    public void insertBeforeNode(InstructionLinkNode node) {
+    public void insertBeforeNode(LinkListNode<F, S> node) {
         this.right = node;
         this.left = node.left;
         node.left = this;
@@ -53,7 +53,7 @@ public class InstructionLinkNode {
         }
     }
 
-    public void insertAfterNode(InstructionLinkNode node) {
+    public void insertAfterNode(LinkListNode<F, S> node) {
         this.right = node.right;
         this.left = node;
         node.right = this;
@@ -67,7 +67,7 @@ public class InstructionLinkNode {
         }
     }
 
-    public void insertBeforeWholeList(InstructionLinkList nodeList) {
+    public void insertBeforeWholeList(LinkList<F, S> nodeList) {
         this.parentList = nodeList;
         if(nodeList.listIsEmpty()) {
             this.parentList.setFirstNode(this);
@@ -78,7 +78,7 @@ public class InstructionLinkNode {
         insertBeforeNode(parentList.getFirstNode());
     }
 
-    public void insertAfterWholeList(InstructionLinkList nodeList) {
+    public void insertAfterWholeList(LinkList<F, S> nodeList) {
         this.parentList = nodeList;
         if(nodeList.listIsEmpty()) {
             this.parentList.setFirstNode(this);
@@ -86,6 +86,6 @@ public class InstructionLinkNode {
             this.parentList.listAddNode();
             return;
         }
-        insertAfterNode(parentList.getFirstNode());
+        insertAfterNode(parentList.getLastNode());
     }
 }

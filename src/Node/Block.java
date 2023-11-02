@@ -64,6 +64,8 @@ public class Block extends Node{
     }
 
     public static void blockLLVMBuilder(Block block) {
-
+        for(BlockItem blockItem : block.blockItemArrayList) {
+            BlockItem.blockItemLLVMBuilder(blockItem);
+        }
     }
 }
