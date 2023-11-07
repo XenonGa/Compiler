@@ -7,14 +7,15 @@ import java.util.ArrayList;
 public class Value {
     private String valueName;
     private Type type;
-    public static int idNum = 0;
+    public static int registerIdNum = 0;
+    public static int UID = 1;
     private String id;
     private ArrayList<Use> uses;
 
     public Value(String valueName, Type type) {
         this.valueName = valueName;
         this.type = type;
-        this.id = "unique" + idNum++;
+        this.id = "unique" + UID++;
         this.uses = new ArrayList<>();
     }
 
@@ -22,8 +23,16 @@ public class Value {
         return type;
     }
 
+    public void setType(Type type) {
+        this.type = type;
+    }
+
     public String getValueName() {
         return valueName;
+    }
+
+    public void setValueName(String valueName) {
+        this.valueName = valueName;
     }
 
     public String toString() {

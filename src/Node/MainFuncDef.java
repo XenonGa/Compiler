@@ -78,7 +78,7 @@ public class MainFuncDef extends Node{
         // TODO funcArgs
         Block.blockLLVMBuilder(mainFuncDef.block);
         SymbolTable.popLLVMSymbolTable();
-        BuilderAttribute.isAtGlobal = false;
+        BuilderAttribute.isAtGlobal = true;
 
         TypeFunction funcType = (TypeFunction) BuilderAttribute.currentBlock.getParentFunc().getParentList().getValue().getType();
         Type functionReturnType = funcType.getReturnType();

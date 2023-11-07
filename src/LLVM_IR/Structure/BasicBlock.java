@@ -16,7 +16,8 @@ public class BasicBlock extends Value {
     private LinkListNode<BasicBlock, Function> parentFunc;
 
     public BasicBlock(Function function) {
-        super("" + BuilderAttribute.register, new TypeIdent());
+        super("" + registerIdNum, new TypeIdent());
+        registerIdNum += 1;
         this.frontBlocks = new ArrayList<>();
         this.backBlocks = new ArrayList<>();
 

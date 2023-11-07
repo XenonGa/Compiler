@@ -1,12 +1,12 @@
 package Node;
 
 import FileProcess.MyFileWriter;
+import LLVM_IR.BuilderAttribute;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 // 变量声明 VarDecl → BType VarDef { ',' VarDef } ';'
 public class VarDecl extends Node {
@@ -55,6 +55,9 @@ public class VarDecl extends Node {
     }
 
     public static void varDeclLLVMBuilder(VarDecl varDecl) {
-
+        BuilderAttribute.curTempType = BuilderAttribute.i32;
+        for (VarDef varDef : varDecl.varDefArrayList) {
+            VarDef.varDefLLVMBuilder(varDef);
+        }
     }
 }

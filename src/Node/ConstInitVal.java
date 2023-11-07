@@ -86,7 +86,13 @@ public class ConstInitVal extends Node {
         }
     }
 
+    // TODO ConstInitVal -> ConstExp | '{' [ ConstInitVal { ',' ConstInitVal } ] '}'
     public static void constInitValLLVMBuilder(ConstInitVal constInitVal) {
-
+        if(constInitVal.constExp != null) {
+            ConstExp.constExpLLVMBuilder(constInitVal.constExp);
+        }
+        else {
+            // TODO ARRAY
+        }
     }
 }

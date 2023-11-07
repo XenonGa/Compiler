@@ -4,6 +4,7 @@ import ErrorHandler.*;
 import FileProcess.MyFileWriter;
 import Identifier.*;
 import LLVM_IR.BuilderAttribute;
+import LLVM_IR.Instruction.Instruction_Binary;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
@@ -219,7 +220,9 @@ public class UnaryExp extends Node{
                     BuilderAttribute.curSaveValue = -1 * BuilderAttribute.curSaveValue;
                 }
                 else {
-                    // TODO build binary
+                    BuilderAttribute.curTempValue = Instruction_Binary.makeBinaryInst(
+                            BuilderAttribute.currentBlock, "Sub", BuilderAttribute.zero, BuilderAttribute.curTempValue
+                    );
                 }
             }
             else if(operator.equals("NOT")) {

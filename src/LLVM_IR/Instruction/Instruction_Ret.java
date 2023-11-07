@@ -2,7 +2,6 @@ package LLVM_IR.Instruction;
 
 
 import LLVM_IR.BuilderAttribute;
-import LLVM_IR.LLVMType.Type;
 import LLVM_IR.Structure.BasicBlock;
 import LLVM_IR.Structure.Value;
 

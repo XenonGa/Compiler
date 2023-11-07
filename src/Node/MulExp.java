@@ -3,6 +3,7 @@ package Node;
 import FileProcess.MyFileWriter;
 import Identifier.FuncParam;
 import LLVM_IR.BuilderAttribute;
+import LLVM_IR.Instruction.Instruction_Binary;
 import LLVM_IR.Structure.Value;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
@@ -74,47 +75,63 @@ public class MulExp extends Node {
         }
     }
 
+
     public static void mulExpLLVMBuilder(MulExp mulExp) {
         if(BuilderAttribute.isConstant) {
             Integer tempValue = BuilderAttribute.curSaveValue;
-            String Operator = BuilderAttribute.curSaveOperator;
+            String operator = BuilderAttribute.curSaveOperator;
             BuilderAttribute.curSaveValue = null;
 
             UnaryExp.unaryExpLLVMBuilder(mulExp.unaryExp);
             if(tempValue != null) {
-                // TODO calculate
+                if(operator != null) {
+                    if(operator.equals("Mul")) {
+                        BuilderAttribute.curSaveValue = tempValue * BuilderAttribute.curSaveValue;
+                    }
+                    else if(operator.equals("Div")) {
+                        BuilderAttribute.curSaveValue = tempValue / BuilderAttribute.curSaveValue;
+                    }
+                    else if(operator.equals("Mod")) {
+                        BuilderAttribute.curSaveValue = tempValue % BuilderAttribute.curSaveValue;
+                    }
+                }
+               else {
+                    BuilderAttribute.curSaveValue = 0;
+                }
             }
             if(mulExp.mulExp != null) {
                 if(mulExp.sign.getCategory().equals("MULT")) {
-                    BuilderAttribute.curSaveOperator = "MULT";
+                    BuilderAttribute.curSaveOperator = "Mul";
                 }
                 else if(mulExp.sign.getCategory().equals("DIV")) {
-                    BuilderAttribute.curSaveOperator = "DIV";
+                    BuilderAttribute.curSaveOperator = "Div";
                 }
                 else if(mulExp.sign.getCategory().equals("MOD")) {
-                    BuilderAttribute.curSaveOperator = "MOD";
+                    BuilderAttribute.curSaveOperator = "Mod";
                 }
+                mulExpLLVMBuilder(mulExp.mulExp);
             }
-            mulExpLLVMBuilder(mulExp.mulExp);
         }
         else {
             Value tempValue = BuilderAttribute.curTempValue;
-            String Operator = BuilderAttribute.curTempOperator;
+            String operator = BuilderAttribute.curTempOperator;
             BuilderAttribute.curTempValue = null;
 
             UnaryExp.unaryExpLLVMBuilder(mulExp.unaryExp);
             if(tempValue != null) {
-                // TODO calculate
+                BuilderAttribute.curTempValue = Instruction_Binary.makeBinaryInst(
+                        BuilderAttribute.currentBlock, operator, tempValue, BuilderAttribute.curTempValue
+                );
             }
             if(mulExp.mulExp != null) {
                 if(mulExp.sign.getCategory().equals("MULT")) {
-                    BuilderAttribute.curTempOperator = "MULT";
+                    BuilderAttribute.curTempOperator = "Mul";
                 }
                 else if(mulExp.sign.getCategory().equals("DIV")) {
-                    BuilderAttribute.curTempOperator = "DIV";
+                    BuilderAttribute.curTempOperator = "Div";
                 }
                 else if(mulExp.sign.getCategory().equals("MOD")) {
-                    BuilderAttribute.curTempOperator = "MOD";
+                    BuilderAttribute.curTempOperator = "Mod";
                 }
                 mulExpLLVMBuilder(mulExp.mulExp);
             }

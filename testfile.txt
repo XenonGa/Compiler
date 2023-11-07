@@ -1,3 +1,7 @@
-int main() {
-    return 0;
+int main(){
+  {
+    int a = 1;
+    a = getint();
+    printf("h%d",a);
+  return 0;
 }

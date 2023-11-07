@@ -82,4 +82,14 @@ public class InitVal extends Node {
             initValErrorHandler(initVal1);
         }
     }
+
+    // TODO InitVal -> Exp | '{' [ InitVal { ',' InitVal } ] '}'
+    public static void initValLLVMBuilder(InitVal initVal) {
+        if(initVal.exp != null) {
+            Exp.expLLVMBuilder(initVal.exp);
+        }
+        else {
+            // TODO ARRAY
+        }
+    }
 }

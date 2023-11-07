@@ -4,8 +4,12 @@ import ErrorHandler.*;
 import FileProcess.MyFileWriter;
 import Identifier.*;
 import LLVM_IR.BuilderAttribute;
-import LLVM_IR.Instruction.Instruction_Br;
-import LLVM_IR.Instruction.Instruction_Ret;
+import LLVM_IR.Instruction.*;
+import LLVM_IR.Structure.ConstNum;
+import LLVM_IR.Structure.Function;
+import LLVM_IR.Structure.FunctionParameter;
+import LLVM_IR.Structure.Value;
+import LLVM_IR.SymbolTable;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
@@ -478,6 +482,86 @@ public class Stmt extends Node{
                     }
                     else {
                         Instruction_Ret.makeReturnInst(BuilderAttribute.currentBlock);
+                    }
+                }
+                case LVal_Assign_Exp -> {
+                    if(stmt.lVal.getExpArrayList().isEmpty()) {
+                        Value lVal = SymbolTable.getValSymbol(stmt.lVal.getIdent().getToken());
+                        Exp.expLLVMBuilder(stmt.exp);
+                        BuilderAttribute.curTempValue = new Instruction_Store(BuilderAttribute.curTempValue, lVal);
+                    }
+                    else {
+                        // TODO ARRAY
+                    }
+                }
+                case Exp -> {
+                    if(stmt.exp != null) {
+                        Exp.expLLVMBuilder(stmt.exp);
+                    }
+                }
+                case Block -> {
+                    SymbolTable.pushLLVMSymbolTable();
+                    Block.blockLLVMBuilder(stmt.block);
+                    SymbolTable.popLLVMSymbolTable();
+                }
+                case LVal_Assign_Getint -> {
+                    if(stmt.lVal.getExpArrayList().isEmpty()) {
+                        Value lVal = SymbolTable.getValSymbol(stmt.lVal.getIdent().getToken());
+
+                        Function getInt = (Function) SymbolTable.getValSymbol("getint");
+                        Instruction_Call call = new Instruction_Call(getInt, new ArrayList<>());
+                        call.addInstructionInBlock(BuilderAttribute.currentBlock);
+                        BuilderAttribute.curTempValue = call;
+
+                        Instruction_Store store = new Instruction_Store(BuilderAttribute.curTempValue, lVal);
+                        store.addInstructionInBlock(BuilderAttribute.currentBlock);
+                    }
+                    else {
+                        // TODO ARRAY
+                    }
+                }
+                case Printf -> {
+                    String formatString = stmt.formatString.getToken();
+                    formatString = formatString.replace("\\n", "\n");
+                    formatString = formatString.replace("\"", "");
+                    ArrayList<Value> params = new ArrayList<>();
+                    for(Exp exp : stmt.expArrayList) {
+                        Exp.expLLVMBuilder(exp);
+                        params.add(BuilderAttribute.curTempValue);
+                    }
+                    for(int i = 0; i < formatString.length(); i++) {
+                        if(formatString.charAt(i) == '%') {
+
+                            ArrayList<Value> callFuncParams = new ArrayList<>();
+                            callFuncParams.add(params.remove(0));
+
+                            Function getInt = (Function) SymbolTable.getValSymbol("putint");
+                            assert getInt != null;
+
+                            Instruction_Call call = new Instruction_Call(getInt, callFuncParams);
+                            call.addInstructionInBlock(BuilderAttribute.currentBlock);
+                            i = i + 1;
+                        }
+                        int index = i;
+                        while(index < formatString.length() && formatString.charAt(index) == '%') {
+                            index = index + 1;
+                        }
+                        String s = formatString.substring(i, index);
+                        if(s.length() == 1) {
+                            ArrayList<Value> callFuncParams = new ArrayList<>();
+                            ConstNum charNum = new ConstNum(s.charAt(0));
+                            callFuncParams.add(charNum);
+
+                            Function putChar = (Function) SymbolTable.getValSymbol("putch");
+                            assert putChar != null;
+
+                            Instruction_Call call = new Instruction_Call(putChar, callFuncParams);
+                            call.addInstructionInBlock(BuilderAttribute.currentBlock);
+                        }
+                        else {
+                            SymbolTable.getValSymbol()
+                            Value strAddress = new Instruction_GEP()
+                        }
                     }
                 }
             }

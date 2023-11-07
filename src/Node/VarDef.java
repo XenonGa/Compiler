@@ -4,6 +4,13 @@ import ErrorHandler.ErrorHandler;
 import ErrorHandler.MyError;
 import FileProcess.MyFileWriter;
 import Identifier.Identifier;
+import LLVM_IR.Builder;
+import LLVM_IR.BuilderAttribute;
+import LLVM_IR.Instruction.Instruction_Alloca;
+import LLVM_IR.Instruction.Instruction_Store;
+import LLVM_IR.Structure.ConstNum;
+import LLVM_IR.Structure.GlobalVariable;
+import LLVM_IR.SymbolTable;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
@@ -101,5 +108,52 @@ public class VarDef extends Node {
         if(varDef.initVal != null) {
             InitVal.initValErrorHandler(varDef.initVal);
         }
+    }
+
+    // TODO VarDef → Ident { '[' ConstExp ']' } | Ident { '[' ConstExp ']' } '=' InitVal
+    public static void varDefLLVMBuilder(VarDef varDef) {
+        String ident = varDef.ident.getToken();
+
+        if(!varDef.constExpArrayList.isEmpty()) {
+            // TODO ARRAY
+        }
+        else {
+            BuilderAttribute.curTempValue = null;
+            if(varDef.initVal != null) {
+                if(BuilderAttribute.isAtGlobal) {
+                    BuilderAttribute.isConstant = true;
+                    BuilderAttribute.curSaveValue = null;
+                }
+                InitVal.initValLLVMBuilder(varDef.initVal);
+                BuilderAttribute.isConstant = false;
+            }
+            else {
+                if(BuilderAttribute.isAtGlobal) {
+                    BuilderAttribute.curSaveValue = null;
+                }
+            }
+
+            if(BuilderAttribute.isAtGlobal) {
+                int globalInt = 0;
+                if(BuilderAttribute.curSaveValue != null) {
+                    globalInt = BuilderAttribute.curSaveValue;
+                }
+                BuilderAttribute.curTempValue = new GlobalVariable(ident, BuilderAttribute.curTempType,
+                      new ConstNum(globalInt), false);
+                SymbolTable.addValSymbol(ident, BuilderAttribute.curTempValue);
+            }
+            else {
+                //  local variables
+                Instruction_Alloca allocate = new Instruction_Alloca(BuilderAttribute.curTempType);
+                allocate.addInstructionInBlock(BuilderAttribute.currentBlock);
+                if(BuilderAttribute.curTempValue != null) {
+                    Instruction_Store store = new Instruction_Store(BuilderAttribute.curTempValue, allocate);
+                    store.addInstructionInBlock(BuilderAttribute.currentBlock);
+                }
+                SymbolTable.addValSymbol(ident, allocate);
+                BuilderAttribute.curTempValue = allocate;
+            }
+        }
+
     }
 }

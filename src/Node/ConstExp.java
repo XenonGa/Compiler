@@ -1,6 +1,8 @@
 package Node;
 
 import FileProcess.MyFileWriter;
+import LLVM_IR.Builder;
+import LLVM_IR.BuilderAttribute;
 import Parse.NodeTypeMap;
 
 // 常量表达式 ConstExp → AddExp
@@ -27,5 +29,15 @@ public class ConstExp extends Node {
 
     public static void constExpErrorHandler(ConstExp constExp) {
         AddExp.addExpErrorHandler(constExp.addExp);
+    }
+
+    // TODO ConstExp -> AddExp
+    public static void constExpLLVMBuilder(ConstExp constExp) {
+        BuilderAttribute.curSaveValue = null;
+        BuilderAttribute.isConstant = true;
+
+        AddExp.AddExpLLVMBuilder(constExp.addExp);
+
+        BuilderAttribute.isConstant = false;
     }
 }

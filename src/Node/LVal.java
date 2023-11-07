@@ -3,6 +3,14 @@ package Node;
 import ErrorHandler.*;
 import FileProcess.MyFileWriter;
 import Identifier.FuncParam;
+import LLVM_IR.BuilderAttribute;
+import LLVM_IR.Instruction.Instruction_Load;
+import LLVM_IR.LLVMType.Type;
+import LLVM_IR.LLVMType.TypeArray;
+import LLVM_IR.LLVMType.TypePointer;
+import LLVM_IR.Structure.ConstNum;
+import LLVM_IR.Structure.Value;
+import LLVM_IR.SymbolTable;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
@@ -72,7 +80,45 @@ public class LVal extends Node {
         return new FuncParam(lVal.ident.getToken(), lVal.expArrayList.size());
     }
 
+    // TODO LVal → Ident {'[' Exp ']'}
     public static void lValLLVMBuilder(LVal lVal) {
-
+        if(BuilderAttribute.isConstant) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(lVal.ident.getToken());
+            if(!lVal.expArrayList.isEmpty()) {
+                sb.append("0;");
+                for(Exp exp : lVal.expArrayList) {
+                    Exp.expLLVMBuilder(exp);
+                    int num = 0;
+                    if(BuilderAttribute.curSaveValue != null) {
+                        num = BuilderAttribute.curSaveValue;
+                    }
+                    ConstNum cn = new ConstNum(num);
+                    sb.append(cn.getNum());
+                    sb.append(";");
+                }
+            }
+            String ident = sb.toString();
+            BuilderAttribute.curSaveValue = SymbolTable.getConstSymbol(ident);
+        }
+        else {
+            if(lVal.expArrayList.isEmpty()) {
+                Value lval = SymbolTable.getValSymbol(lVal.getIdent().getToken());
+                BuilderAttribute.curTempValue = lval;
+                Type type = lval.getType();
+                Type targetType = ((TypePointer) type).getType();
+                if(targetType instanceof TypeArray) {
+                    // TODO ARRAY
+                }
+                else {
+                    Instruction_Load load = new Instruction_Load(BuilderAttribute.curTempValue);
+                    load.addInstructionInBlock(BuilderAttribute.currentBlock);
+                    BuilderAttribute.curTempValue = load;
+                }
+            }
+            else {
+                // TODO ARRAY
+            }
+        }
     }
 }

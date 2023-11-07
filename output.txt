@@ -3,6 +3,43 @@ MAINTK main
 LPARENT (
 RPARENT )
 LBRACE {
+LBRACE {
+INTTK int
+IDENFR a
+ASSIGN =
+INTCON 1
+<Number>
+<PrimaryExp>
+<UnaryExp>
+<MulExp>
+<AddExp>
+<Exp>
+<InitVal>
+<VarDef>
+SEMICN ;
+<VarDecl>
+IDENFR a
+<LVal>
+ASSIGN =
+GETINTTK getint
+LPARENT (
+RPARENT )
+SEMICN ;
+<Stmt>
+PRINTFTK printf
+LPARENT (
+STRCON "h%d"
+COMMA ,
+IDENFR a
+<LVal>
+<PrimaryExp>
+<UnaryExp>
+<MulExp>
+<AddExp>
+<Exp>
+RPARENT )
+SEMICN ;
+<Stmt>
 RETURNTK return
 INTCON 0
 <Number>
@@ -12,6 +49,9 @@ INTCON 0
 <AddExp>
 <Exp>
 SEMICN ;
+<Stmt>
+RBRACE }
+<Block>
 <Stmt>
 RBRACE }
 <Block>

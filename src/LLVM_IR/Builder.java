@@ -5,20 +5,21 @@ import LLVM_IR.Instruction.LinkList;
 import LLVM_IR.Instruction.LinkListNode;
 import LLVM_IR.Structure.BasicBlock;
 import LLVM_IR.Structure.Function;
+import LLVM_IR.Structure.GlobalVariable;
 import Node.CompUnit;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Builder {
-
-    // TODO global var
     public static LinkList<Function, Builder> functionList;
     public static HashMap<Integer, Instruction>instructions;
+    public static ArrayList<GlobalVariable> globalVariableArrayList;
 
     public Builder() {
-        // TODO global var
         functionList = new LinkList<>(this);
         instructions = new HashMap<>();
+        globalVariableArrayList = new ArrayList<>();
     }
 
     public void BuildLLVM(CompUnit compUnit) {
@@ -27,7 +28,14 @@ public class Builder {
 
     public String writeLLVM() {
         StringBuilder sb = new StringBuilder();
-        // TODO global var
+
+        // global var
+        for(GlobalVariable gv : globalVariableArrayList) {
+            sb.append(gv.toString());
+            sb.append("\n");
+        }
+        if(!globalVariableArrayList.isEmpty()) sb.append("\n");
+
         LinkListNode<Function, Builder> func = functionList.getFirstNode();
         while (func != null) {
             if(func.getNodeValue().isLib()) {
@@ -47,7 +55,7 @@ public class Builder {
                     }
                     sb.append(";<label>:");
                     sb.append(basicBlockNode.getNodeValue().getValueName());
-                    sb.append("\n");
+                    sb.append(":\n");
                     sb.append(basicBlockNode.getNodeValue().writeBasicBlock());
 
                     basicBlockNode = basicBlockNode.getRight();

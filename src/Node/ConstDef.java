@@ -3,6 +3,13 @@ package Node;
 import ErrorHandler.ErrorHandler;
 import FileProcess.MyFileWriter;
 import Identifier.Identifier;
+import LLVM_IR.Builder;
+import LLVM_IR.BuilderAttribute;
+import LLVM_IR.Instruction.Instruction_Alloca;
+import LLVM_IR.Instruction.Instruction_Store;
+import LLVM_IR.Structure.ConstNum;
+import LLVM_IR.Structure.GlobalVariable;
+import LLVM_IR.SymbolTable;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
@@ -89,8 +96,39 @@ public class ConstDef extends Node {
         ConstInitVal.constInitValErrorHandler(constDef.constInitVal);
     }
 
+    // TODO ConstDef -> Ident { '[' ConstExp ']' } '=' ConstInitVal
     public static void constDefLLVMBuilder(ConstDef constDef) {
         String ident = constDef.ident.getToken();
+
+        if (!constDef.constExpArrayList.isEmpty()) {
+            // TODO ARRAY
+        }
+        else {
+            ConstInitVal.constInitValLLVMBuilder(constDef.constInitVal);
+            BuilderAttribute.curTempValue = null;
+            if(BuilderAttribute.curSaveValue != null) {
+                BuilderAttribute.curTempValue = new ConstNum(BuilderAttribute.curSaveValue);
+            }
+            SymbolTable.addConstSymbol(ident, BuilderAttribute.curSaveValue);
+
+            if(BuilderAttribute.isAtGlobal) {
+                // global variables
+                BuilderAttribute.curTempValue = new GlobalVariable(ident, BuilderAttribute.curTempType,
+                        BuilderAttribute.curTempValue, true);
+                SymbolTable.addValSymbol(ident, BuilderAttribute.curTempValue);
+            }
+            else {
+                // TODO local variables
+                Instruction_Alloca allocate = new Instruction_Alloca(BuilderAttribute.curTempType);
+                allocate.addInstructionInBlock(BuilderAttribute.currentBlock);
+                if(BuilderAttribute.curTempValue != null) {
+                    Instruction_Store store = new Instruction_Store(BuilderAttribute.curTempValue, allocate);
+                    store.addInstructionInBlock(BuilderAttribute.currentBlock);
+                }
+                SymbolTable.addValSymbol(ident, allocate);
+                BuilderAttribute.curTempValue = allocate;
+             }
+        }
 
     }
 }

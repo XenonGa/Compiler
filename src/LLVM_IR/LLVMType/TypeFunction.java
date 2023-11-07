@@ -18,4 +18,6 @@ public class TypeFunction extends Type {
     public ArrayList<Type> getParamsType() {
         return paramsType;
     }
+
+    // TODO ARRAY
 }

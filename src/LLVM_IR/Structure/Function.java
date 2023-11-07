@@ -10,23 +10,29 @@ import java.util.ArrayList;
 
 public class Function extends Value {
     private boolean isLib;
-
     private ArrayList<Function> frontFunctions;
     private ArrayList<Function> backFunctions;
     private LinkList<BasicBlock, Function> basicBlockList;
     private LinkListNode<Function, Builder> funcNode;
+    private ArrayList<FunctionParameter> functionParameterArrayList;
 
 
 
 
     public Function(String name, Type type, boolean isLib) {
         super(name, type);
-        Value.idNum = 0;
+        Value.registerIdNum = 0;
         this.isLib = isLib;
         this.frontFunctions = new ArrayList<>();
         this.backFunctions = new ArrayList<>();
         this.basicBlockList = new LinkList<>(this);
         this.funcNode = new LinkListNode<>(this);
+        this.functionParameterArrayList = new ArrayList<>();
+        for(Type type1 : ((TypeFunction) type).getParamsType()) {
+            FunctionParameter fp = new FunctionParameter(type1, isLib);
+            this.functionParameterArrayList.add(fp);
+        }
+
         this.funcNode.insertAfterWholeList(Builder.functionList);
     }
 
@@ -55,7 +61,13 @@ public class Function extends Value {
         str.append(this.getValueName());
         str.append("(");
 
-        // TODO Argument
+        // Parameter
+        for(int i = 0; i < this.functionParameterArrayList.size(); i++) {
+            str.append(this.functionParameterArrayList.get(i).getType());
+            if(i != this.functionParameterArrayList.size() - 1) {
+                str.append(", ");
+            }
+        }
 
         str.append(")");
         return str.toString();

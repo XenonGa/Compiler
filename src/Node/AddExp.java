@@ -3,6 +3,7 @@ package Node;
 import FileProcess.MyFileWriter;
 import Identifier.FuncParam;
 import LLVM_IR.BuilderAttribute;
+import LLVM_IR.Instruction.Instruction_Binary;
 import LLVM_IR.Structure.Value;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
@@ -69,24 +70,35 @@ public class AddExp extends Node {
         return MulExp.getFuncParamFromMulExp(addExp.mulExp);
     }
 
+    // TODO AddExp → MulExp | AddExp ('+' | '−') MulExp
     public static void AddExpLLVMBuilder(AddExp addExp) {
         if(BuilderAttribute.isConstant) {
             Integer tempValue = BuilderAttribute.curSaveValue;
             String operator = BuilderAttribute.curSaveOperator;
-            BuilderAttribute.curSaveOperator = null;
+            BuilderAttribute.curSaveValue = null;
 
             MulExp.mulExpLLVMBuilder(addExp.mulExp);
 
             if(tempValue != null) {
-                // TODO calculate
+                if(operator != null) {
+                    if(operator.equals("Add")) {
+                        BuilderAttribute.curSaveValue = tempValue + BuilderAttribute.curSaveValue;
+                    }
+                    else if(operator.equals("Sub")) {
+                        BuilderAttribute.curSaveValue = tempValue - BuilderAttribute.curSaveValue;
+                    }
+                }
+                else {
+                    BuilderAttribute.curSaveValue = 0;
+                }
             }
 
             if(addExp.addExp != null) {
                 if(addExp.sign.getCategory().equals("PLUS")) {
-                    BuilderAttribute.curSaveOperator = "PLUS";
+                    BuilderAttribute.curSaveOperator = "Add";
                 }
                 else {
-                    BuilderAttribute.curSaveOperator = "MINU";
+                    BuilderAttribute.curSaveOperator = "Sub";
                 }
                 AddExpLLVMBuilder(addExp.addExp);
             }
@@ -100,16 +112,17 @@ public class AddExp extends Node {
             MulExp.mulExpLLVMBuilder(addExp.mulExp);
 
             if(tempValue != null) {
-                // TODO build binary
-
+                BuilderAttribute.curTempValue = Instruction_Binary.makeBinaryInst(
+                        BuilderAttribute.currentBlock, operator, tempValue, BuilderAttribute.curTempValue
+                );
             }
 
             if(addExp.addExp != null) {
                 if(addExp.sign.getCategory().equals("PLUS")) {
-                    BuilderAttribute.curTempOperator = "PLUS";
+                    BuilderAttribute.curTempOperator = "Add";
                 }
                 else {
-                    BuilderAttribute.curTempOperator = "MINU";
+                    BuilderAttribute.curTempOperator = "Sub";
                 }
                 AddExpLLVMBuilder(addExp.addExp);
             }
