@@ -30,6 +30,10 @@ public class Instruction_GEP extends Instruction {
         }
     }
 
+    public Instruction_GEP(Value target, int offset) {
+        this(target, ((TypeArray) ((TypePointer) target.getType()).getType()).turnOffsetToIndex(offset));
+    }
+
     private static Type getTypeInGEP(Value target, ArrayList<Value> indexArraylist) {
         Type type = target.getType();
         for (int i = 0; i < indexArraylist.size(); i++) {
@@ -61,9 +65,9 @@ public class Instruction_GEP extends Instruction {
         sb.append(((TypePointer) getTarget().getType()).getType().toString());
         sb.append(", ");
         for(int i = 0; i < this.getOpList().size(); i++) {
-                sb.append(getTarget().getType());
+                sb.append(getOpList().get(i).getType());
                 sb.append(" ");
-                sb.append(getTarget().getValueName());
+                sb.append(getOpList().get(i).getValueName());
             if(i != this.getOpList().size() - 1) {
                 sb.append(", ");
             }

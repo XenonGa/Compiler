@@ -1,6 +1,7 @@
 package LLVM_IR.Instruction;
 
 import LLVM_IR.LLVMType.Type;
+import LLVM_IR.LLVMType.TypeArray;
 import LLVM_IR.LLVMType.TypePointer;
 
 public class Instruction_Alloca extends Instruction {
@@ -11,7 +12,13 @@ public class Instruction_Alloca extends Instruction {
         this.targetType = targetType;
         this.setValueName("%" + registerIdNum);
         registerIdNum += 1;
-        // TODO ARRAY allocation
+        // ARRAY allocation
+        if(targetType instanceof TypeArray) {
+            if(((TypeArray)targetType).getArrayLength() == -1) {
+                this.targetType = new TypePointer(((TypeArray)targetType).getType());
+                this.setType(new TypePointer(this.targetType));
+            }
+        }
     }
 
     public Type getTargetType() {

@@ -5,6 +5,16 @@ import FileProcess.MyFileWriter;
 import Identifier.FuncIdent;
 import Identifier.FuncParam;
 import Identifier.Identifier;
+import LLVM_IR.BuilderAttribute;
+import LLVM_IR.Instruction.Instruction_Br;
+import LLVM_IR.Instruction.Instruction_Ret;
+import LLVM_IR.LLVMType.Type;
+import LLVM_IR.LLVMType.TypeFunction;
+import LLVM_IR.LLVMType.TypeInt;
+import LLVM_IR.Structure.BasicBlock;
+import LLVM_IR.Structure.Function;
+import LLVM_IR.Structure.Value;
+import LLVM_IR.SymbolTable;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
@@ -101,7 +111,47 @@ public class FuncDef extends Node{
         ErrorHandler.popSymbolTable();
     }
 
+    // TODO FuncDef -> FuncType Ident '(' [FuncFParams] ')' Block
     public static void funcDefLLVMBuilder(FuncDef funcDef) {
+        BuilderAttribute.isAtGlobal = false;
 
+        String ident = funcDef.ident.getToken();
+        String category = funcDef.funcType.getTK().getCategory();
+        Type type = null;
+        if(category.equals("INTTK")) {
+            type = BuilderAttribute.i32;
+        }
+        else if(category.equals("VOIDTK")) {
+            type = BuilderAttribute.typeVoid;
+        }
+        BuilderAttribute.paramTypeArrayList = new ArrayList<>();
+        if(funcDef.funcFParams != null) {
+            FuncFParams.funcFParamsLLVMBuilder(funcDef.funcFParams);
+        }
+        Function func = Function.createFunction(ident, type, BuilderAttribute.paramTypeArrayList);
+        BuilderAttribute.curentFunction = func;
+        SymbolTable.addValSymbol(ident, func);
+        SymbolTable.pushLLVMSymbolTable();
+        SymbolTable.addValSymbol(ident, func);
+
+        BuilderAttribute.currentBlock = new BasicBlock(BuilderAttribute.curentFunction);
+        BuilderAttribute.funcParamArrayList = BuilderAttribute.curentFunction.getFunctionParameterArrayList();
+        BuilderAttribute.isCreatingFunction = true;
+        if(funcDef.funcFParams != null) {
+            FuncFParams.funcFParamsLLVMBuilder(funcDef.funcFParams);
+        }
+        BuilderAttribute.isCreatingFunction = false;
+        Block.blockLLVMBuilder(funcDef.block);
+        BuilderAttribute.isAtGlobal = true;
+        SymbolTable.popLLVMSymbolTable();
+
+        TypeFunction funcType = (TypeFunction) BuilderAttribute.currentBlock.getParentFunc().getParentList().getValue().getType();
+        Type functionReturnType = funcType.getReturnType();
+        if(!BuilderAttribute.currentBlock.getInstList().listIsEmpty()) {
+            Value instruction =BuilderAttribute.currentBlock.getInstList().getLastNode().getNodeValue();
+            if(instruction instanceof Instruction_Br || instruction instanceof Instruction_Ret) return;
+            if(functionReturnType instanceof TypeInt) Instruction_Ret.makeReturnInst(BuilderAttribute.currentBlock, BuilderAttribute.zero);
+            else Instruction_Ret.makeReturnInst(BuilderAttribute.currentBlock);
+        }
     }
 }

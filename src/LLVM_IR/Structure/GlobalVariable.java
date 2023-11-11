@@ -22,6 +22,10 @@ public class GlobalVariable extends User {
         Builder.globalVariableArrayList.add(this);
     }
 
+    public Value getGlobalValue() {
+        return value;
+    }
+
     public String toString() {
         StringBuilder str = new StringBuilder();
         str.append(this.getValueName());

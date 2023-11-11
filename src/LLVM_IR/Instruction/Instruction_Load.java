@@ -1,5 +1,6 @@
 package LLVM_IR.Instruction;
 
+import LLVM_IR.LLVMType.TypeArray;
 import LLVM_IR.LLVMType.TypePointer;
 import LLVM_IR.Structure.Value;
 
@@ -10,7 +11,11 @@ public class Instruction_Load extends Instruction {
         this.setValueName("%" + registerIdNum);
         registerIdNum += 1;
         this.target = target;
-        // TODO ARRAY
+        // ARRAY
+        if(this.getType() instanceof TypeArray) {
+            TypePointer pointer = new TypePointer(((TypeArray) this.getType()).getType());
+            this.setType(pointer);
+        }
         this.addOp(target);
     }
 

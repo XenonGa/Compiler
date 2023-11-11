@@ -8,6 +8,8 @@ import LLVM_IR.Structure.ConstNum;
 import LLVM_IR.Structure.Function;
 import LLVM_IR.Structure.Value;
 
+import java.util.ArrayList;
+
 public class BuilderAttribute {
 
     public static TypeInt i1 = new TypeInt(1);
@@ -25,4 +27,22 @@ public class BuilderAttribute {
     public static Integer curSaveValue;
     public static String curTempOperator;
     public static String curSaveOperator;
+    public static ArrayList<String> formatStringArrayList = new ArrayList<>();
+
+    public static ArrayList<Type> paramTypeArrayList;
+
+    public static ArrayList<Value> tempParamArrayList;
+
+    public static ArrayList<Value> funcParamArrayList = new ArrayList<>();
+
+    public static Boolean isCreatingFunction = false;
+
+    public static int tempIndex = 0;
+
+    public static ArrayList<Integer> arrayDimensionList = new ArrayList<>();
+    public static int arrayDepth = 0;
+    public static int arrayOffset = 0;
+    public static Value currentArray = null;
+    public static Boolean isCreatingArray = false;
+    public static String curTempIdent = null;
 }

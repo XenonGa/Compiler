@@ -1,6 +1,8 @@
 package Node;
 
 import FileProcess.MyFileWriter;
+import LLVM_IR.BuilderAttribute;
+import LLVM_IR.Structure.Value;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
@@ -47,5 +49,14 @@ public class FuncRParams extends Node{
         for(Exp exp : funcRParams.expArrayList) {
             Exp.expErrorHandler(exp);
         }
+    }
+
+    public static void funcRParamsLLVMBuilder(FuncRParams funcRParams) {
+        ArrayList<Value> param = new ArrayList<>();
+        for(Exp exp : funcRParams.expArrayList) {
+            Exp.expLLVMBuilder(exp);
+            param.add(BuilderAttribute.curTempValue);
+        }
+        BuilderAttribute.tempParamArrayList = param;
     }
 }

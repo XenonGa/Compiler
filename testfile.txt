@@ -1,7 +1,7 @@
+int a[3+3]={1,2,3,4,5,6};
+int b[3][3]={{3,6+2,5},{1,2,0},{0,0,0}};
 int main(){
-  {
-    int a = 1;
-    a = getint();
-    printf("h%d",a);
-  return 0;
+    a[0]=getint();
+    b[1][1]=getint();
+    return 0;
 }

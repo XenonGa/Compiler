@@ -46,7 +46,7 @@ public class TypeArray extends Type {
         return dims;
     }
 
-    public int getSpaceNum() {
+    public int getArrayCapacity() {
         ArrayList<Integer> dims = calDimensions();
         int spaceNum = 1;
         for(int dim : dims) {
@@ -56,7 +56,7 @@ public class TypeArray extends Type {
     }
 
     public String toString() {
-        return "[" + this.arrayLength +"x" + this.type.toString() + "]";
+        return "[" + this.arrayLength +" x " + this.type.toString() + "]";
     }
 
     public ArrayList<Value> turnOffsetToIndex(int offset) {
@@ -66,10 +66,10 @@ public class TypeArray extends Type {
             if(!(type1 instanceof TypeArray)) {
                 break;
             }
-            int num = offset / ((TypeArray) type1).getSpaceNum();
+            int num = offset / ((TypeArray) type1).getArrayCapacity();
             Value index = new ConstNum(num);
             result.add(index);
-            offset = offset % ((TypeArray) type1).getSpaceNum();
+            offset = offset % ((TypeArray) type1).getArrayCapacity();
         }
         Value index = new ConstNum(offset);
         result.add(index);

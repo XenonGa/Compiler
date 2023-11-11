@@ -5,10 +5,9 @@ import FileProcess.MyFileWriter;
 import Identifier.*;
 import LLVM_IR.BuilderAttribute;
 import LLVM_IR.Instruction.*;
-import LLVM_IR.Structure.ConstNum;
-import LLVM_IR.Structure.Function;
-import LLVM_IR.Structure.FunctionParameter;
-import LLVM_IR.Structure.Value;
+import LLVM_IR.LLVMType.Type;
+import LLVM_IR.LLVMType.TypePointer;
+import LLVM_IR.Structure.*;
 import LLVM_IR.SymbolTable;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
@@ -488,10 +487,37 @@ public class Stmt extends Node{
                     if(stmt.lVal.getExpArrayList().isEmpty()) {
                         Value lVal = SymbolTable.getValSymbol(stmt.lVal.getIdent().getToken());
                         Exp.expLLVMBuilder(stmt.exp);
-                        BuilderAttribute.curTempValue = new Instruction_Store(BuilderAttribute.curTempValue, lVal);
+                        Instruction_Store store = new Instruction_Store(BuilderAttribute.curTempValue, lVal);
+                        store.addInstructionInBlock(BuilderAttribute.currentBlock);
+                        BuilderAttribute.curTempValue = store;
                     }
                     else {
-                        // TODO ARRAY
+                        // ARRAY
+                        ArrayList<Value> list = new ArrayList<>();
+                        for(Exp exp : stmt.lVal.getExpArrayList()) {
+                            Exp.expLLVMBuilder(exp);
+                            list.add(BuilderAttribute.curTempValue);
+                        }
+                        String ident = stmt.lVal.getIdent().getToken();
+                        BuilderAttribute.curTempValue = SymbolTable.getValSymbol(ident);
+                        Type type = BuilderAttribute.curTempValue.getType();
+                        Type targetType = ((TypePointer) type).getType();
+                        if(targetType instanceof TypePointer) {
+                            // func f param like a[][1]
+                            Instruction_Load load = new Instruction_Load(BuilderAttribute.curTempValue);
+                            load.addInstructionInBlock(BuilderAttribute.currentBlock);
+                            BuilderAttribute.curTempValue = load;
+                        }
+                        else {
+                            // a[1][1]
+                            list.add(0, BuilderAttribute.zero);
+                        }
+                        Instruction_GEP gep = new Instruction_GEP(BuilderAttribute.curTempValue, list);
+                        gep.addInstructionInBlock(BuilderAttribute.currentBlock);
+                        Exp.expLLVMBuilder(stmt.exp);
+                        Instruction_Store store = new Instruction_Store(BuilderAttribute.curTempValue, gep);
+                        store.addInstructionInBlock(BuilderAttribute.currentBlock);
+                        BuilderAttribute.curTempValue = store;
                     }
                 }
                 case Exp -> {
@@ -517,7 +543,34 @@ public class Stmt extends Node{
                         store.addInstructionInBlock(BuilderAttribute.currentBlock);
                     }
                     else {
-                        // TODO ARRAY
+                        // ARRAY
+                        ArrayList<Value> list = new ArrayList<>();
+                        for(Exp exp : stmt.lVal.getExpArrayList()) {
+                            Exp.expLLVMBuilder(exp);
+                            list.add(BuilderAttribute.curTempValue);
+                        }
+                        String ident = stmt.lVal.getIdent().getToken();
+                        BuilderAttribute.curTempValue = SymbolTable.getValSymbol(ident);
+                        Type type = BuilderAttribute.curTempValue.getType();
+                        Type targetType = ((TypePointer) type).getType();
+                        if(targetType instanceof TypePointer) {
+                            // func f param like a[][1]
+                            Instruction_Load load = new Instruction_Load(BuilderAttribute.curTempValue);
+                            load.addInstructionInBlock(BuilderAttribute.currentBlock);
+                            BuilderAttribute.curTempValue = load;
+                        }
+                        else {
+                            // a[1][1]
+                            list.add(0, BuilderAttribute.zero);
+                        }
+                        Instruction_GEP gep = new Instruction_GEP(BuilderAttribute.curTempValue, list);
+                        gep.addInstructionInBlock(BuilderAttribute.currentBlock);
+                        Value getInt = SymbolTable.getValSymbol("getint");
+                        Instruction_Call call = new Instruction_Call((Function) getInt, new ArrayList<>());
+                        call.addInstructionInBlock(BuilderAttribute.currentBlock);
+                        Instruction_Store store = new Instruction_Store(call, gep);
+                        store.addInstructionInBlock(BuilderAttribute.currentBlock);
+                        BuilderAttribute.curTempValue = store;
                     }
                 }
                 case Printf -> {
@@ -542,25 +595,38 @@ public class Stmt extends Node{
                             call.addInstructionInBlock(BuilderAttribute.currentBlock);
                             i = i + 1;
                         }
-                        int index = i;
-                        while(index < formatString.length() && formatString.charAt(index) == '%') {
-                            index = index + 1;
-                        }
-                        String s = formatString.substring(i, index);
-                        if(s.length() == 1) {
-                            ArrayList<Value> callFuncParams = new ArrayList<>();
-                            ConstNum charNum = new ConstNum(s.charAt(0));
-                            callFuncParams.add(charNum);
-
-                            Function putChar = (Function) SymbolTable.getValSymbol("putch");
-                            assert putChar != null;
-
-                            Instruction_Call call = new Instruction_Call(putChar, callFuncParams);
-                            call.addInstructionInBlock(BuilderAttribute.currentBlock);
-                        }
                         else {
-                            SymbolTable.getValSymbol()
-                            Value strAddress = new Instruction_GEP()
+                            int index = i;
+                            while(index < formatString.length() && formatString.charAt(index) != '%') {
+                                index = index + 1;
+                            }
+                            String s = formatString.substring(i, index);
+                            if(s.length() == 1) {
+                                ArrayList<Value> callFuncParams = new ArrayList<>();
+                                ConstNum charNum = new ConstNum(s.charAt(0));
+                                callFuncParams.add(charNum);
+
+                                Function putChar = (Function) SymbolTable.getValSymbol("putch");
+                                assert putChar != null;
+
+                                Instruction_Call call = new Instruction_Call(putChar, callFuncParams);
+                                call.addInstructionInBlock(BuilderAttribute.currentBlock);
+                            }
+                            else {
+                                Value value = SymbolTable.getValSymbol(FormatString.getFormatStringName(s));
+                                ArrayList<Value> indexList = new ArrayList<>();
+                                indexList.add(BuilderAttribute.zero);
+                                indexList.add(BuilderAttribute.zero);
+                                Instruction_GEP strAddress = new Instruction_GEP(value, indexList);
+                                strAddress.addInstructionInBlock(BuilderAttribute.currentBlock);
+
+                                Value callValue = SymbolTable.getValSymbol("putstr");
+                                ArrayList<Value> callParams = new ArrayList<>();
+                                callParams.add(strAddress);
+                                Instruction_Call call = new Instruction_Call((Function) callValue, callParams);
+                                call.addInstructionInBlock(BuilderAttribute.currentBlock);
+                                i = index - 1;
+                            }
                         }
                     }
                 }

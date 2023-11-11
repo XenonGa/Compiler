@@ -5,6 +5,9 @@ import FileProcess.MyFileWriter;
 import Identifier.*;
 import LLVM_IR.BuilderAttribute;
 import LLVM_IR.Instruction.Instruction_Binary;
+import LLVM_IR.Instruction.Instruction_Call;
+import LLVM_IR.Structure.Function;
+import LLVM_IR.SymbolTable;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
@@ -207,7 +210,17 @@ public class UnaryExp extends Node{
             PrimaryExp.primaryExpLLVMBuilder(unaryExp.primaryExp);
         }
         else if(unaryExp.ident != null) {
-            // TODO ident
+            // ident
+            String ident = unaryExp.ident.getToken();
+            Function func = (Function) SymbolTable.getValSymbol(ident);
+            assert func != null;
+            BuilderAttribute.tempParamArrayList = new ArrayList<>();
+            if(unaryExp.funcRParams != null) {
+                FuncRParams.funcRParamsLLVMBuilder(unaryExp.funcRParams);
+            }
+            Instruction_Call call = new Instruction_Call(func, BuilderAttribute.tempParamArrayList);
+            call.addInstructionInBlock(BuilderAttribute.currentBlock);
+            BuilderAttribute.curTempValue = call;
         }
         else if(unaryExp.unaryOp != null) {
             String operator = unaryExp.unaryOp.getSign().getCategory();

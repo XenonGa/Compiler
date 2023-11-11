@@ -3,10 +3,12 @@ package Node;
 import ErrorHandler.ErrorHandler;
 import FileProcess.MyFileWriter;
 import Identifier.Identifier;
-import LLVM_IR.Builder;
 import LLVM_IR.BuilderAttribute;
 import LLVM_IR.Instruction.Instruction_Alloca;
 import LLVM_IR.Instruction.Instruction_Store;
+import LLVM_IR.LLVMType.Type;
+import LLVM_IR.LLVMType.TypeArray;
+import LLVM_IR.Structure.ConstArray;
 import LLVM_IR.Structure.ConstNum;
 import LLVM_IR.Structure.GlobalVariable;
 import LLVM_IR.SymbolTable;
@@ -16,7 +18,6 @@ import Parse.Parser;
 import ErrorHandler.MyError;
 import Identifier.ValIdent;
 
-import javax.print.DocFlavor;
 import java.util.ArrayList;
 
 // 常数定义 ConstDef → Ident { '[' ConstExp ']' } '=' ConstInitVal
@@ -101,7 +102,35 @@ public class ConstDef extends Node {
         String ident = constDef.ident.getToken();
 
         if (!constDef.constExpArrayList.isEmpty()) {
-            // TODO ARRAY
+            // ARRAY
+            ArrayList<Integer> arrayDim = new ArrayList<>();
+            for(ConstExp constExp : constDef.constExpArrayList) {
+                ConstExp.constExpLLVMBuilder(constExp);
+                arrayDim.add(BuilderAttribute.curSaveValue);
+            }
+            BuilderAttribute.arrayDimensionList = new ArrayList<>();
+            BuilderAttribute.arrayDimensionList.addAll(arrayDim);
+            TypeArray arrayType = null;
+            for(int i = arrayDim.size() - 1; i >= 0; i--) {
+                int len = arrayDim.get(i);
+                if(arrayType != null) arrayType = new TypeArray(arrayType, len);
+                else arrayType = new TypeArray(BuilderAttribute.curTempType, len);
+            }
+            if(BuilderAttribute.isAtGlobal) {
+                Type elementType = arrayType.getType();
+                int len = arrayType.getArrayCapacity();
+                ConstArray array = new ConstArray(arrayType, elementType, len);
+                BuilderAttribute.curTempValue = new GlobalVariable(ident, arrayType, array, true);
+                array.arrayIsInitialized();
+            }
+            else {
+                Instruction_Alloca allocation = new Instruction_Alloca(arrayType);
+                allocation.addInstructionInBlock(BuilderAttribute.currentBlock);
+                BuilderAttribute.curTempValue = allocation;
+            }
+            SymbolTable.addValSymbol(ident, BuilderAttribute.curTempValue);
+            BuilderAttribute.currentArray = BuilderAttribute.curTempValue;
+            initializeArray(ident, constDef.constInitVal);
         }
         else {
             ConstInitVal.constInitValLLVMBuilder(constDef.constInitVal);
@@ -118,7 +147,7 @@ public class ConstDef extends Node {
                 SymbolTable.addValSymbol(ident, BuilderAttribute.curTempValue);
             }
             else {
-                // TODO local variables
+                // local variables
                 Instruction_Alloca allocate = new Instruction_Alloca(BuilderAttribute.curTempType);
                 allocate.addInstructionInBlock(BuilderAttribute.currentBlock);
                 if(BuilderAttribute.curTempValue != null) {
@@ -130,5 +159,14 @@ public class ConstDef extends Node {
              }
         }
 
+    }
+
+    private static void initializeArray(String ident, ConstInitVal constInitVal) {
+        BuilderAttribute.isCreatingArray = true;
+        BuilderAttribute.arrayDepth = 0;
+        BuilderAttribute.arrayOffset = 0;
+        BuilderAttribute.curTempIdent = ident;
+        ConstInitVal.constInitValLLVMBuilder(constInitVal);
+        BuilderAttribute.isCreatingArray = false;
     }
 }

@@ -44,6 +44,10 @@ public class Function extends Value {
         return isLib;
     }
 
+    public ArrayList<Value> getFunctionParameterArrayList() {
+        return new ArrayList<>(functionParameterArrayList);
+    }
+
     public static Function createFunction(String name, Type returnType, ArrayList<Type> paramsType) {
         Type typeFunction = new TypeFunction(returnType, paramsType);
         return new Function(name, typeFunction, false);
@@ -64,6 +68,10 @@ public class Function extends Value {
         // Parameter
         for(int i = 0; i < this.functionParameterArrayList.size(); i++) {
             str.append(this.functionParameterArrayList.get(i).getType());
+            if(!this.isLib) {
+                str.append(" ");
+                str.append(this.functionParameterArrayList.get(i).getValueName());
+            }
             if(i != this.functionParameterArrayList.size() - 1) {
                 str.append(", ");
             }
@@ -71,5 +79,12 @@ public class Function extends Value {
 
         str.append(")");
         return str.toString();
+    }
+
+    public void resetParamsRegisters() {
+        for(FunctionParameter param : this.functionParameterArrayList) {
+            param.setValueName("%" + registerIdNum);
+            registerIdNum += 1;
+        }
     }
 }

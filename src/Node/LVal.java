@@ -4,6 +4,7 @@ import ErrorHandler.*;
 import FileProcess.MyFileWriter;
 import Identifier.FuncParam;
 import LLVM_IR.BuilderAttribute;
+import LLVM_IR.Instruction.Instruction_GEP;
 import LLVM_IR.Instruction.Instruction_Load;
 import LLVM_IR.LLVMType.Type;
 import LLVM_IR.LLVMType.TypeArray;
@@ -108,7 +109,13 @@ public class LVal extends Node {
                 Type type = lval.getType();
                 Type targetType = ((TypePointer) type).getType();
                 if(targetType instanceof TypeArray) {
-                    // TODO ARRAY
+                    // ARRAY
+                    ArrayList<Value> list = new ArrayList<>();
+                    list.add(BuilderAttribute.zero);
+                    list.add(BuilderAttribute.zero);
+                    Instruction_GEP gep = new Instruction_GEP(BuilderAttribute.curTempValue, list);
+                    gep.addInstructionInBlock(BuilderAttribute.currentBlock);
+                    BuilderAttribute.curTempValue = gep;
                 }
                 else {
                     Instruction_Load load = new Instruction_Load(BuilderAttribute.curTempValue);
@@ -117,7 +124,42 @@ public class LVal extends Node {
                 }
             }
             else {
-                // TODO ARRAY
+                // ARRAY
+                ArrayList<Value> list = new ArrayList<>();
+                for(Exp exp : lVal.expArrayList) {
+                    Exp.expLLVMBuilder(exp);
+                    list.add(BuilderAttribute.curTempValue);
+                }
+                String ident = lVal.getIdent().getToken();
+                BuilderAttribute.curTempValue = SymbolTable.getValSymbol(ident);
+                Type type = BuilderAttribute.curTempValue.getType();
+                Type targetType = ((TypePointer) type).getType();
+                if(targetType instanceof TypePointer) {
+                    // func f param like a[][1]
+                    Instruction_Load load = new Instruction_Load(BuilderAttribute.curTempValue);
+                    load.addInstructionInBlock(BuilderAttribute.currentBlock);
+                    BuilderAttribute.curTempValue = load;
+                }
+                else {
+                    // a[1][1]
+                    list.add(0, BuilderAttribute.zero);
+                }
+                Instruction_GEP gep = new Instruction_GEP(BuilderAttribute.curTempValue, list);
+                gep.addInstructionInBlock(BuilderAttribute.currentBlock);
+                TypePointer pointer =  ((TypePointer) gep.getType());
+                if(pointer.getType() instanceof TypeArray) {
+                    ArrayList<Value> indices = new ArrayList<>();
+                    indices.add(BuilderAttribute.zero);
+                    indices.add(BuilderAttribute.zero);
+                    Instruction_GEP gep1 = new Instruction_GEP(gep, indices);
+                    gep1.addInstructionInBlock(BuilderAttribute.currentBlock);
+                    BuilderAttribute.curTempValue = gep1;
+                }
+                else {
+                    Instruction_Load load = new Instruction_Load(gep);
+                    load.addInstructionInBlock(BuilderAttribute.currentBlock);
+                    BuilderAttribute.curTempValue = load;
+                }
             }
         }
     }

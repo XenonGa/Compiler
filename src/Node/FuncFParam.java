@@ -2,6 +2,13 @@ package Node;
 
 import FileProcess.MyFileWriter;
 import Identifier.Identifier;
+import LLVM_IR.Builder;
+import LLVM_IR.BuilderAttribute;
+import LLVM_IR.Instruction.Instruction_Alloca;
+import LLVM_IR.Instruction.Instruction_Store;
+import LLVM_IR.LLVMType.TypeArray;
+import LLVM_IR.Structure.Value;
+import LLVM_IR.SymbolTable;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
@@ -86,5 +93,41 @@ public class FuncFParam extends Node{
         }
         Identifier ident = new ValIdent(name, false, funcFParam.getLeftBracketArrayList().size());
         ErrorHandler.addInSymbolTable(name, ident);
+    }
+
+    // TODO BType Ident [ '[' ']' { '[' ConstExp ']' }]
+    public static void funcFParamLLVMBuilder(FuncFParam funcFParam) {
+        if(BuilderAttribute.isCreatingFunction) {
+            int i = BuilderAttribute.tempIndex;
+            Instruction_Alloca alloc = new Instruction_Alloca(BuilderAttribute.paramTypeArrayList.get(i));
+            alloc.addInstructionInBlock(BuilderAttribute.currentBlock);
+            if(BuilderAttribute.funcParamArrayList.get(i) != null) {
+                Instruction_Store store = new Instruction_Store(BuilderAttribute.funcParamArrayList.get(i), alloc);
+                store.addInstructionInBlock(BuilderAttribute.currentBlock);
+            }
+            SymbolTable.addValSymbol(funcFParam.ident.getToken(), alloc);
+        }
+        else {
+            if(funcFParam.leftBracketArrayList.isEmpty()) {
+                BuilderAttribute.curTempType = BuilderAttribute.i32;
+            }
+            else {
+                ArrayList<Integer> dimensions = new ArrayList<>();
+                dimensions.add(-1);
+                if(funcFParam.constExp != null) {
+                    BuilderAttribute.isConstant = true;
+                    ConstExp.constExpLLVMBuilder(funcFParam.constExp);
+                    dimensions.add(BuilderAttribute.curSaveValue);
+                    BuilderAttribute.isConstant = false;
+                }
+                BuilderAttribute.curTempType = null;
+                for(int i = dimensions.size() - 1; i >= 0; i--) {
+                    if(BuilderAttribute.curTempType == null) {
+                        BuilderAttribute.curTempType = BuilderAttribute.i32;
+                    }
+                    BuilderAttribute.curTempType = new TypeArray(BuilderAttribute.curTempType, dimensions.get(i));
+                }
+            }
+        }
     }
 }

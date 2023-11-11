@@ -1,10 +1,13 @@
 package Node;
 
 import FileProcess.MyFileWriter;
+import LLVM_IR.Builder;
+import LLVM_IR.BuilderAttribute;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
 
+import java.io.BufferedWriter;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -46,6 +49,23 @@ public class FuncFParams extends Node {
     public static void funcFParamsErrorHandler(FuncFParams funcFParams) {
         for(FuncFParam param : funcFParams.funcFParamArrayList) {
             FuncFParam.funcFParamErrorHandler(param);
+        }
+    }
+
+    // TODO FuncFParams -> FuncFParam { ',' FuncFParam }
+    public static void funcFParamsLLVMBuilder(FuncFParams funcFParams) {
+        if(BuilderAttribute.isCreatingFunction) {
+            BuilderAttribute.tempIndex = 0;
+            for(int i = 0; i < funcFParams.funcFParamArrayList.size(); i++, BuilderAttribute.tempIndex ++) {
+                FuncFParam.funcFParamLLVMBuilder(funcFParams.funcFParamArrayList.get(i));
+            }
+        }
+        else {
+            BuilderAttribute.paramTypeArrayList = new ArrayList<>();
+            for(FuncFParam funcFParam : funcFParams.funcFParamArrayList) {
+                FuncFParam.funcFParamLLVMBuilder(funcFParam);
+                BuilderAttribute.paramTypeArrayList.add(BuilderAttribute.curTempType);
+            }
         }
     }
 }
