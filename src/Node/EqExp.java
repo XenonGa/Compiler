@@ -1,6 +1,9 @@
 package Node;
 
 import FileProcess.MyFileWriter;
+import LLVM_IR.BuilderAttribute;
+import LLVM_IR.Instruction.Instruction_Binary;
+import LLVM_IR.Structure.Value;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
@@ -60,6 +63,27 @@ public class EqExp extends Node {
         RelExp.relExpErrorHandler(eqExp.relExp);
         if(eqExp.eqExp != null) {
             eqExpErrorHandler(eqExp.eqExp);
+        }
+    }
+
+    public static void eqExpLLVMBuilder(EqExp eqExp) {
+        Value tempValue = BuilderAttribute.curTempValue;
+        String operator = BuilderAttribute.curTempOperator;
+        BuilderAttribute.curTempValue = null;
+
+        RelExp.relExpLLVMBuilder(eqExp.relExp);
+        if(tempValue != null) {
+            BuilderAttribute.curTempValue = Instruction_Binary.makeBinaryInst(
+                    BuilderAttribute.currentBlock, operator, tempValue, BuilderAttribute.curTempValue
+            );
+        }
+        if(eqExp.eqExp != null) {
+            if (eqExp.sign.getCategory().equals("EQL")) {
+                BuilderAttribute.curTempOperator = "Eq";
+            } else if (eqExp.sign.getCategory().equals("LEQ")) {
+                BuilderAttribute.curTempOperator = "Ne";
+            }
+            eqExpLLVMBuilder(eqExp.eqExp);
         }
     }
 }

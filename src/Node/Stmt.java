@@ -3,6 +3,7 @@ package Node;
 import ErrorHandler.*;
 import FileProcess.MyFileWriter;
 import Identifier.*;
+import LLVM_IR.Builder;
 import LLVM_IR.BuilderAttribute;
 import LLVM_IR.Instruction.*;
 import LLVM_IR.LLVMType.Type;
@@ -628,6 +629,75 @@ public class Stmt extends Node{
                                 i = index - 1;
                             }
                         }
+                    }
+                }
+                //  TODO 'if' '(' Cond ')' Stmt [ 'else' Stmt ] // 1.有else 2.无else
+                case If -> {
+                    /* TODO else
+                        beforeBlock
+                        if (cond)
+                        {
+                            ifBlock 1
+                            ...
+                            ifBlock n
+                        }
+                        else
+                        {
+                            elseBlock 1
+                            ...
+                            elseBlock n
+                        }
+                        afterBlock
+                        */
+                    if(stmt.elseTK != null) {
+                        BasicBlock beforeBlock = BuilderAttribute.currentBlock;
+                        BasicBlock ifBlock = new BasicBlock(BuilderAttribute.curentFunction);
+                        BasicBlock elseBlock = new BasicBlock(BuilderAttribute.curentFunction);
+                        BasicBlock afterBlock = new BasicBlock(BuilderAttribute.curentFunction);
+
+                        BuilderAttribute.currentBlock = ifBlock;
+                        stmtLLVMBuilder(stmt.stmtArrayList.get(0));
+                        Instruction_Br ifBlockBrToAfterBlock = new Instruction_Br(afterBlock);
+                        ifBlockBrToAfterBlock.addInstructionInBlock(BuilderAttribute.currentBlock);
+
+                        BuilderAttribute.currentBlock = elseBlock;
+                        stmtLLVMBuilder(stmt.stmtArrayList.get(1));
+                        Instruction_Br elseBlockBrToAfterBlock = new Instruction_Br(afterBlock);
+                        elseBlockBrToAfterBlock.addInstructionInBlock(BuilderAttribute.currentBlock);
+
+                        BuilderAttribute.currentBlock = beforeBlock;
+                        BuilderAttribute.currentIfBlock = ifBlock;
+                        BuilderAttribute.currentElseBlock = elseBlock;
+                        Cond.condLLVMBuilder(stmt.cond);
+
+                        BuilderAttribute.currentBlock = afterBlock;
+                    }
+                    /* TODO no else
+                        beforeBlock
+                        if (cond)
+                        {
+                            ifBlock 1
+                            ...
+                            ifBlock n
+                        }
+                        afterBlock
+                        */
+                    else {
+                        BasicBlock beforeBlock = BuilderAttribute.currentBlock;
+                        BasicBlock ifBlock = new BasicBlock(BuilderAttribute.curentFunction);
+                        BasicBlock afterBlock = new BasicBlock(BuilderAttribute.curentFunction);
+
+                        BuilderAttribute.currentBlock = ifBlock;
+                        stmtLLVMBuilder(stmt.stmtArrayList.get(0));
+                        Instruction_Br ifBlockBrToAfterBlock = new Instruction_Br(afterBlock);
+                        ifBlockBrToAfterBlock.addInstructionInBlock(BuilderAttribute.currentBlock);
+
+                        BuilderAttribute.currentBlock = beforeBlock;
+                        BuilderAttribute.currentIfBlock = ifBlock;
+                        BuilderAttribute.currentElseBlock = afterBlock;
+                        Cond.condLLVMBuilder(stmt.cond);
+
+                        BuilderAttribute.currentBlock = afterBlock;
                     }
                 }
             }

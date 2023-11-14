@@ -1,6 +1,9 @@
 package Node;
 
 import FileProcess.MyFileWriter;
+import LLVM_IR.BuilderAttribute;
+import LLVM_IR.Instruction.Instruction_Binary;
+import LLVM_IR.Structure.Value;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
@@ -68,6 +71,31 @@ public class RelExp extends Node {
         AddExp.addExpErrorHandler(relExp.addExp);
         if(relExp.relExp != null) {
             relExpErrorHandler(relExp.relExp);
+        }
+    }
+
+    public static void relExpLLVMBuilder(RelExp relExp) {
+        Value tempValue = BuilderAttribute.curTempValue;
+        String operator = BuilderAttribute.curTempOperator;
+        BuilderAttribute.curTempValue = null;
+
+        AddExp.AddExpLLVMBuilder(relExp.addExp);
+        if(tempValue != null) {
+            BuilderAttribute.curTempValue = Instruction_Binary.makeBinaryInst(
+                    BuilderAttribute.currentBlock, operator, tempValue, BuilderAttribute.curTempValue
+            );
+        }
+        if(relExp.relExp != null) {
+            if (relExp.sign.getCategory().equals("LSS")) {
+                BuilderAttribute.curTempOperator = "Lt";
+            } else if (relExp.sign.getCategory().equals("LEQ")) {
+                BuilderAttribute.curTempOperator = "Le";
+            } else if (relExp.sign.getCategory().equals("GRE")) {
+                BuilderAttribute.curTempOperator = "Gt";
+            } else if (relExp.sign.getCategory().equals("GEQ")) {
+                BuilderAttribute.curTempOperator = "Ge";
+            }
+            relExpLLVMBuilder(relExp.relExp);
         }
     }
 }

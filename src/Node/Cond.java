@@ -28,4 +28,8 @@ public class Cond extends Node {
     public static void condErrorHandler(Cond cond) {
         LOrExp.lOrExpErrorHandler(cond.lOrExp);
     }
+
+    public static void condLLVMBuilder(Cond cond) {
+        LOrExp.lOrExpLLVMBuilder(cond.lOrExp);
+    }
 }

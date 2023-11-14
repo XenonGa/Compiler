@@ -45,4 +45,7 @@ public class BuilderAttribute {
     public static Value currentArray = null;
     public static Boolean isCreatingArray = false;
     public static String curTempIdent = null;
+
+    public static BasicBlock currentIfBlock = null;
+    public static BasicBlock currentElseBlock = null;
 }

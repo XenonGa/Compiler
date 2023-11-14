@@ -1,23 +1,6 @@
 INTTK int
 IDENFR a
-LBRACK [
-INTCON 3
-<Number>
-<PrimaryExp>
-<UnaryExp>
-<MulExp>
-<AddExp>
-PLUS +
-INTCON 3
-<Number>
-<PrimaryExp>
-<UnaryExp>
-<MulExp>
-<AddExp>
-<ConstExp>
-RBRACK ]
 ASSIGN =
-LBRACE {
 INTCON 1
 <Number>
 <PrimaryExp>
@@ -26,7 +9,18 @@ INTCON 1
 <AddExp>
 <Exp>
 <InitVal>
-COMMA ,
+<VarDef>
+SEMICN ;
+<VarDecl>
+INTTK int
+<FuncType>
+IDENFR func
+LPARENT (
+RPARENT )
+LBRACE {
+IDENFR a
+<LVal>
+ASSIGN =
 INTCON 2
 <Number>
 <PrimaryExp>
@@ -34,17 +28,30 @@ INTCON 2
 <MulExp>
 <AddExp>
 <Exp>
-<InitVal>
-COMMA ,
-INTCON 3
+SEMICN ;
+<Stmt>
+RETURNTK return
+INTCON 1
 <Number>
 <PrimaryExp>
 <UnaryExp>
 <MulExp>
 <AddExp>
 <Exp>
-<InitVal>
-COMMA ,
+SEMICN ;
+<Stmt>
+RBRACE }
+<Block>
+<FuncDef>
+INTTK int
+<FuncType>
+IDENFR func2
+LPARENT (
+RPARENT )
+LBRACE {
+IDENFR a
+<LVal>
+ASSIGN =
 INTCON 4
 <Number>
 <PrimaryExp>
@@ -52,53 +59,30 @@ INTCON 4
 <MulExp>
 <AddExp>
 <Exp>
-<InitVal>
-COMMA ,
-INTCON 5
-<Number>
-<PrimaryExp>
-<UnaryExp>
-<MulExp>
-<AddExp>
-<Exp>
-<InitVal>
-COMMA ,
-INTCON 6
-<Number>
-<PrimaryExp>
-<UnaryExp>
-<MulExp>
-<AddExp>
-<Exp>
-<InitVal>
-RBRACE }
-<InitVal>
-<VarDef>
 SEMICN ;
-<VarDecl>
+<Stmt>
+RETURNTK return
+INTCON 10
+<Number>
+<PrimaryExp>
+<UnaryExp>
+<MulExp>
+<AddExp>
+<Exp>
+SEMICN ;
+<Stmt>
+RBRACE }
+<Block>
+<FuncDef>
 INTTK int
-IDENFR b
-LBRACK [
-INTCON 3
-<Number>
-<PrimaryExp>
-<UnaryExp>
-<MulExp>
-<AddExp>
-<ConstExp>
-RBRACK ]
-LBRACK [
-INTCON 3
-<Number>
-<PrimaryExp>
-<UnaryExp>
-<MulExp>
-<AddExp>
-<ConstExp>
-RBRACK ]
+<FuncType>
+IDENFR func3
+LPARENT (
+RPARENT )
+LBRACE {
+IDENFR a
+<LVal>
 ASSIGN =
-LBRACE {
-LBRACE {
 INTCON 3
 <Number>
 <PrimaryExp>
@@ -106,146 +90,197 @@ INTCON 3
 <MulExp>
 <AddExp>
 <Exp>
-<InitVal>
-COMMA ,
-INTCON 6
-<Number>
-<PrimaryExp>
-<UnaryExp>
-<MulExp>
-<AddExp>
-PLUS +
-INTCON 2
-<Number>
-<PrimaryExp>
-<UnaryExp>
-<MulExp>
-<AddExp>
-<Exp>
-<InitVal>
-COMMA ,
-INTCON 5
-<Number>
-<PrimaryExp>
-<UnaryExp>
-<MulExp>
-<AddExp>
-<Exp>
-<InitVal>
-RBRACE }
-<InitVal>
-COMMA ,
-LBRACE {
-INTCON 1
-<Number>
-<PrimaryExp>
-<UnaryExp>
-<MulExp>
-<AddExp>
-<Exp>
-<InitVal>
-COMMA ,
-INTCON 2
-<Number>
-<PrimaryExp>
-<UnaryExp>
-<MulExp>
-<AddExp>
-<Exp>
-<InitVal>
-COMMA ,
-INTCON 0
-<Number>
-<PrimaryExp>
-<UnaryExp>
-<MulExp>
-<AddExp>
-<Exp>
-<InitVal>
-RBRACE }
-<InitVal>
-COMMA ,
-LBRACE {
-INTCON 0
-<Number>
-<PrimaryExp>
-<UnaryExp>
-<MulExp>
-<AddExp>
-<Exp>
-<InitVal>
-COMMA ,
-INTCON 0
-<Number>
-<PrimaryExp>
-<UnaryExp>
-<MulExp>
-<AddExp>
-<Exp>
-<InitVal>
-COMMA ,
-INTCON 0
-<Number>
-<PrimaryExp>
-<UnaryExp>
-<MulExp>
-<AddExp>
-<Exp>
-<InitVal>
-RBRACE }
-<InitVal>
-RBRACE }
-<InitVal>
-<VarDef>
 SEMICN ;
-<VarDecl>
+<Stmt>
+RETURNTK return
+INTCON 0
+<Number>
+<PrimaryExp>
+<UnaryExp>
+<MulExp>
+<AddExp>
+<Exp>
+SEMICN ;
+<Stmt>
+RBRACE }
+<Block>
+<FuncDef>
 INTTK int
 MAINTK main
 LPARENT (
 RPARENT )
 LBRACE {
-IDENFR a
-LBRACK [
+IFTK if
+LPARENT (
 INTCON 0
 <Number>
 <PrimaryExp>
 <UnaryExp>
 <MulExp>
 <AddExp>
-<Exp>
-RBRACK ]
-<LVal>
-ASSIGN =
-GETINTTK getint
+<RelExp>
+<EqExp>
+<LAndExp>
+<LOrExp>
+OR ||
+IDENFR func
 LPARENT (
+RPARENT )
+<UnaryExp>
+<MulExp>
+<AddExp>
+<RelExp>
+<EqExp>
+<LAndExp>
+AND &&
+IDENFR func3
+LPARENT (
+RPARENT )
+<UnaryExp>
+<MulExp>
+<AddExp>
+<RelExp>
+<EqExp>
+<LAndExp>
+<LOrExp>
+OR ||
+IDENFR func2
+LPARENT (
+RPARENT )
+<UnaryExp>
+<MulExp>
+<AddExp>
+<RelExp>
+<EqExp>
+<LAndExp>
+<LOrExp>
+<Cond>
+RPARENT )
+LBRACE {
+PRINTFTK printf
+LPARENT (
+STRCON "%d--1"
+COMMA ,
+IDENFR a
+<LVal>
+<PrimaryExp>
+<UnaryExp>
+<MulExp>
+<AddExp>
+<Exp>
 RPARENT )
 SEMICN ;
 <Stmt>
-IDENFR b
-LBRACK [
+RBRACE }
+<Block>
+<Stmt>
+<Stmt>
+IFTK if
+LPARENT (
 INTCON 1
 <Number>
 <PrimaryExp>
 <UnaryExp>
 <MulExp>
 <AddExp>
-<Exp>
-RBRACK ]
-LBRACK [
-INTCON 1
-<Number>
-<PrimaryExp>
-<UnaryExp>
-<MulExp>
-<AddExp>
-<Exp>
-RBRACK ]
-<LVal>
-ASSIGN =
-GETINTTK getint
+<RelExp>
+<EqExp>
+<LAndExp>
+<LOrExp>
+OR ||
+IDENFR func3
 LPARENT (
 RPARENT )
+<UnaryExp>
+<MulExp>
+<AddExp>
+<RelExp>
+<EqExp>
+<LAndExp>
+<LOrExp>
+<Cond>
+RPARENT )
+LBRACE {
+PRINTFTK printf
+LPARENT (
+STRCON "%d--2"
+COMMA ,
+IDENFR a
+<LVal>
+<PrimaryExp>
+<UnaryExp>
+<MulExp>
+<AddExp>
+<Exp>
+RPARENT )
 SEMICN ;
+<Stmt>
+RBRACE }
+<Block>
+<Stmt>
+<Stmt>
+IFTK if
+LPARENT (
+INTCON 0
+<Number>
+<PrimaryExp>
+<UnaryExp>
+<MulExp>
+<AddExp>
+<RelExp>
+<EqExp>
+<LAndExp>
+<LOrExp>
+OR ||
+IDENFR func3
+LPARENT (
+RPARENT )
+<UnaryExp>
+<MulExp>
+<AddExp>
+<RelExp>
+<EqExp>
+<LAndExp>
+<LOrExp>
+OR ||
+IDENFR func
+LPARENT (
+RPARENT )
+<UnaryExp>
+<MulExp>
+<AddExp>
+<RelExp>
+LSS <
+IDENFR func2
+LPARENT (
+RPARENT )
+<UnaryExp>
+<MulExp>
+<AddExp>
+<RelExp>
+<EqExp>
+<LAndExp>
+<LOrExp>
+<Cond>
+RPARENT )
+LBRACE {
+PRINTFTK printf
+LPARENT (
+STRCON "%d--3"
+COMMA ,
+IDENFR a
+<LVal>
+<PrimaryExp>
+<UnaryExp>
+<MulExp>
+<AddExp>
+<Exp>
+RPARENT )
+SEMICN ;
+<Stmt>
+RBRACE }
+<Block>
+<Stmt>
 <Stmt>
 RETURNTK return
 INTCON 0

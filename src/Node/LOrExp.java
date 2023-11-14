@@ -1,6 +1,9 @@
 package Node;
 
 import FileProcess.MyFileWriter;
+import LLVM_IR.BuilderAttribute;
+import LLVM_IR.Instruction.Instruction_Br;
+import LLVM_IR.Structure.BasicBlock;
 import LexicalAnalysis.Token;
 import Parse.NodeTypeMap;
 import Parse.Parser;
@@ -56,6 +59,26 @@ public class LOrExp extends Node {
         LAndExp.lAndExpErrorHandler(lOrExp.lAndExp);
         if(lOrExp.lOrExp != null) {
             lOrExpErrorHandler(lOrExp.lOrExp);
+        }
+    }
+
+    // TODO LOrExp -> LAndExp | LAndExp '||' LOrExp
+    public static void lOrExpLLVMBuilder(LOrExp lOrExp) {
+        BasicBlock ifBlock = BuilderAttribute.currentIfBlock;
+        BasicBlock elseBlock = BuilderAttribute.currentElseBlock;
+        BasicBlock nextBlock = null;
+        BasicBlock tempBlock = elseBlock;
+        if(lOrExp.lOrExp != null) {
+            nextBlock = new BasicBlock(BuilderAttribute.curentFunction);
+            tempBlock = nextBlock;
+        }
+        BuilderAttribute.currentElseBlock = tempBlock;
+        LAndExp.lAndExpLLVMBuilder(lOrExp.lAndExp);
+        BuilderAttribute.currentIfBlock = ifBlock;
+        BuilderAttribute.currentElseBlock = elseBlock;
+        if(lOrExp.lOrExp != null) {
+            BuilderAttribute.currentBlock = nextBlock;
+            lOrExpLLVMBuilder(lOrExp.lOrExp);
         }
     }
 }
