@@ -48,4 +48,7 @@ public class BuilderAttribute {
 
     public static BasicBlock currentIfBlock = null;
     public static BasicBlock currentElseBlock = null;
+
+    public static BasicBlock currentAfterForBlock = null;
+    public static BasicBlock currentContinueBlock = null;
 }

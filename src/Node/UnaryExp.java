@@ -240,7 +240,9 @@ public class UnaryExp extends Node{
             }
             else if(operator.equals("NOT")) {
                 unaryExpLLVMBuilder(unaryExp.unaryExp);
-                // TODO build not
+                // not
+                BuilderAttribute.curTempValue = Instruction_Binary.makeBinaryInst(BuilderAttribute.currentBlock,
+                        "Eq", BuilderAttribute.curTempValue, BuilderAttribute.zero);
             }
         }
     }

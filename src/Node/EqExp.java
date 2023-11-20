@@ -80,7 +80,7 @@ public class EqExp extends Node {
         if(eqExp.eqExp != null) {
             if (eqExp.sign.getCategory().equals("EQL")) {
                 BuilderAttribute.curTempOperator = "Eq";
-            } else if (eqExp.sign.getCategory().equals("LEQ")) {
+            } else if (eqExp.sign.getCategory().equals("NEQ")) {
                 BuilderAttribute.curTempOperator = "Ne";
             }
             eqExpLLVMBuilder(eqExp.eqExp);

@@ -1,17 +1,33 @@
 package LLVM_IR.Instruction;
 
 import LLVM_IR.BuilderAttribute;
+import LLVM_IR.LLVMType.TypeInt;
 import LLVM_IR.Structure.BasicBlock;
 import LLVM_IR.Structure.ConstNum;
 import LLVM_IR.Structure.Value;
 
 public class Instruction_Binary extends Instruction {
-    public Instruction_Binary(String Operator, Value left, Value right) {
+    public Instruction_Binary(BasicBlock block, String Operator, Value left, Value right) {
         super(BuilderAttribute.typeVoid, Operator);
-        // TODO Zext maker
-
-        this.addOp(left);
-        this.addOp(right);
+        // Zext maker
+        Boolean isLeftTypeI1 = left.getType() instanceof TypeInt && ((TypeInt) left.getType()).integer == 1;
+        Boolean isLeftTypeI32 = left.getType() instanceof TypeInt && ((TypeInt) left.getType()).integer == 32;
+        Boolean isRightTypeI1 = right.getType() instanceof TypeInt && ((TypeInt) right.getType()).integer == 1;
+        Boolean isRightTypeI32 = right.getType() instanceof TypeInt && ((TypeInt) right.getType()).integer == 32;
+        if(isLeftTypeI1 && isRightTypeI32) {
+            Value zext = Instruction_Zext.makeInstructionZext(left, block);
+            addOp(zext);
+            addOp(right);
+        }
+        else if(isLeftTypeI32 && isRightTypeI1) {
+            Value zext = Instruction_Zext.makeInstructionZext(right, block);
+            addOp(left);
+            addOp(zext);
+        }
+        else {
+            this.addOp(left);
+            this.addOp(right);
+        }
 
         this.setType(this.getOpList().get(0).getType());
 
@@ -25,9 +41,9 @@ public class Instruction_Binary extends Instruction {
     }
 
     public static Instruction_Binary makeBinaryInst(BasicBlock block, String operator, Value left, Value right) {
-        Instruction_Binary binaryInst = new Instruction_Binary(operator, left, right);
+        Instruction_Binary binaryInst = new Instruction_Binary(block, operator, left, right);
         if(operator.equals("And") || operator.equals("Or")) {
-            Instruction_Binary inst = new Instruction_Binary("Ne", binaryInst, BuilderAttribute.zero);
+            Instruction_Binary inst = new Instruction_Binary(block, "Ne", binaryInst, BuilderAttribute.zero);
             inst.addInstructionInBlock(block);
             return inst;
         }
@@ -52,7 +68,7 @@ public class Instruction_Binary extends Instruction {
                 sb.append("mul i32 ");
             }
             case "Div" -> {
-                sb.append("div i32 ");
+                sb.append("sdiv i32 ");
             }
             case "Mod" -> {
                 sb.append("srem i32 ");

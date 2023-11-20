@@ -1,9 +1,11 @@
 package LLVM_IR.Instruction;
 
+import LLVM_IR.BuilderAttribute;
 import LLVM_IR.LLVMType.Type;
 import LLVM_IR.LLVMType.TypeFunction;
 import LLVM_IR.LLVMType.TypeInt;
 import LLVM_IR.LLVMType.TypeVoid;
+import LLVM_IR.Structure.ConstNum;
 import LLVM_IR.Structure.Function;
 import LLVM_IR.Structure.Value;
 import com.sun.jdi.VoidType;
@@ -41,12 +43,13 @@ public class Instruction_Call extends Instruction {
             return value;
         }
         else if(isCurrentParamI1 && isRealParamI32) {
-            // TODO zext
-            return null;
+            // zext
+            return Instruction_Zext.makeInstructionZext(value, BuilderAttribute.currentBlock);
         }
         else if(isCurrentParamI32 && isRealParamI1) {
-            // TODO convTo i1
-            return null;
+            // convTo i1
+            return Instruction_Binary.makeBinaryInst(BuilderAttribute.currentBlock, "Ne",
+                    value, new ConstNum(0));
         }
         else {
             return value;

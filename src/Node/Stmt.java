@@ -700,6 +700,74 @@ public class Stmt extends Node{
                         BuilderAttribute.currentBlock = afterBlock;
                     }
                 }
+                /* TODO for
+                    { beforeBlock
+                        forStmt1
+                    }
+                    condBlock; -> 类似if
+                    forBlock;
+                    forStmt2Block;
+
+                    AfterBlock;
+                 */
+                case For -> {
+                    BasicBlock beforeBlock = BuilderAttribute.currentBlock;
+                    BasicBlock tempContinueBlock = BuilderAttribute.currentContinueBlock;
+                    BasicBlock tempAfterForBlock = BuilderAttribute.currentAfterForBlock;
+
+                    BasicBlock condBlock = new BasicBlock(BuilderAttribute.curentFunction);
+                    if(stmt.forStmt1 != null) {
+                        ForStmt.forStmtLLVMBuilder(stmt.forStmt1);
+                    }
+                    Instruction_Br brToCond = new Instruction_Br(condBlock);
+                    brToCond.addInstructionInBlock(beforeBlock);
+
+                    BasicBlock forBlock = new BasicBlock(BuilderAttribute.curentFunction);
+                    BasicBlock forStmt2Block = new BasicBlock(BuilderAttribute.curentFunction);
+                    BasicBlock afterForBlock = new BasicBlock(BuilderAttribute.curentFunction);
+
+                    // cond Block
+                    BuilderAttribute.currentBlock = condBlock;
+                    BuilderAttribute.currentIfBlock = forBlock;
+                    BuilderAttribute.currentElseBlock = afterForBlock;
+                    if(stmt.cond != null) {
+                        Cond.condLLVMBuilder(stmt.cond);
+                    }
+                    else {
+                        // cond is empty
+                        // directly jump to forStmtBlock
+                        Instruction_Br brToForStmtBlock = new Instruction_Br(forBlock);
+                        brToForStmtBlock.addInstructionInBlock(BuilderAttribute.currentBlock);
+                    }
+
+                    // for Block
+                    BuilderAttribute.currentBlock = forBlock;
+                    BuilderAttribute.currentContinueBlock = forStmt2Block;
+                    BuilderAttribute.currentAfterForBlock = afterForBlock;
+                    stmtLLVMBuilder(stmt.stmtArrayList.get(0));
+                    Instruction_Br brToForStmt2 = new Instruction_Br(forStmt2Block);
+                    brToForStmt2.addInstructionInBlock(BuilderAttribute.currentBlock);
+
+                    // forStmt2 Block
+                    BuilderAttribute.currentBlock = forStmt2Block;
+                    if(stmt.forStmt2 != null) {
+                        ForStmt.forStmtLLVMBuilder(stmt.forStmt2);
+                    }
+                    Instruction_Br forStmt2BrToCond = new Instruction_Br(condBlock);
+                    forStmt2BrToCond.addInstructionInBlock(BuilderAttribute.currentBlock);
+
+                    BuilderAttribute.currentContinueBlock = tempContinueBlock;
+                    BuilderAttribute.currentAfterForBlock = tempAfterForBlock;
+                    BuilderAttribute.currentBlock = afterForBlock;
+                }
+                case Break -> {
+                    Instruction_Br br = new Instruction_Br(BuilderAttribute.currentAfterForBlock);
+                    br.addInstructionInBlock(BuilderAttribute.currentBlock);
+                }
+                case Continue -> {
+                    Instruction_Br br = new Instruction_Br(BuilderAttribute.currentContinueBlock);
+                    br.addInstructionInBlock(BuilderAttribute.currentBlock);
+                }
             }
     }
 }

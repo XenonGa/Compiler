@@ -5,6 +5,7 @@ import FileProcess.MyFileWriter;
 import Identifier.FuncIdent;
 import Identifier.FuncParam;
 import Identifier.Identifier;
+import LLVM_IR.Builder;
 import LLVM_IR.BuilderAttribute;
 import LLVM_IR.Instruction.Instruction_Br;
 import LLVM_IR.Instruction.Instruction_Ret;
@@ -145,13 +146,6 @@ public class FuncDef extends Node{
         BuilderAttribute.isAtGlobal = true;
         SymbolTable.popLLVMSymbolTable();
 
-        TypeFunction funcType = (TypeFunction) BuilderAttribute.currentBlock.getParentFunc().getParentList().getValue().getType();
-        Type functionReturnType = funcType.getReturnType();
-        if(!BuilderAttribute.currentBlock.getInstList().listIsEmpty()) {
-            Value instruction =BuilderAttribute.currentBlock.getInstList().getLastNode().getNodeValue();
-            if(instruction instanceof Instruction_Br || instruction instanceof Instruction_Ret) return;
-            if(functionReturnType instanceof TypeInt) Instruction_Ret.makeReturnInst(BuilderAttribute.currentBlock, BuilderAttribute.zero);
-            else Instruction_Ret.makeReturnInst(BuilderAttribute.currentBlock);
-        }
+        Builder.handleBlockEnd(BuilderAttribute.currentBlock);
     }
 }

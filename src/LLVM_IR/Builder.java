@@ -73,6 +73,17 @@ public class Builder {
         return sb.toString();
     }
 
+    public static void handleBlockEnd(BasicBlock block) {
+        TypeFunction funcType = (TypeFunction) block.getParentFunc().getParentList().getValue().getType();
+        Type functionReturnType = funcType.getReturnType();
+        if(!block.getInstList().listIsEmpty()) {
+            Value instruction =block.getInstList().getLastNode().getNodeValue();
+            if(instruction instanceof Instruction_Br || instruction instanceof Instruction_Ret) return;
+        }
+        if(functionReturnType instanceof TypeInt) Instruction_Ret.makeReturnInst(block, BuilderAttribute.zero);
+        else Instruction_Ret.makeReturnInst(block);
+    }
+
     private void resetBlockAndInstRegisters() {
         LinkListNode<Function, Builder> func = functionList.getFirstNode();
         while (func != null) {
@@ -83,14 +94,7 @@ public class Builder {
                 while (basicBlockNode != null) {
                     BasicBlock basicBlock = basicBlockNode.getNodeValue();
                     if(basicBlockNode.getNodeValue().getInstList().listIsEmpty()) {
-                        TypeFunction funcType = (TypeFunction) basicBlock.getParentFunc().getParentList().getValue().getType();
-                        Type functionReturnType = funcType.getReturnType();
-                        if(!basicBlock.getInstList().listIsEmpty()) {
-                            Value instruction =basicBlock.getInstList().getLastNode().getNodeValue();
-                            if(instruction instanceof Instruction_Br || instruction instanceof Instruction_Ret) return;
-                            if(functionReturnType instanceof TypeInt) Instruction_Ret.makeReturnInst(basicBlock, BuilderAttribute.zero);
-                            else Instruction_Ret.makeReturnInst(basicBlock);
-                        }
+                        handleBlockEnd(basicBlock);
                     }
                     basicBlock.setValueName(String.valueOf(Value.registerIdNum));
                     Value.registerIdNum += 1;
